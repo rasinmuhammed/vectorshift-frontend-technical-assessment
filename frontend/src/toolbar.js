@@ -1,165 +1,102 @@
-// toolbar.js - Sophisticated Dark Toolbar
+// toolbar.js - VectorShift Style Toolbar
 
+import { useState } from 'react';
 import { DraggableNode } from './draggableNode';
 
 export const PipelineToolbar = () => {
-  const nodeCategories = [
-    {
-      title: 'Core Components',
-      nodes: [
-        { type: 'customInput', label: 'Input', description: 'Data source' },
-        { type: 'customOutput', label: 'Output', description: 'Data destination' },
-        { type: 'text', label: 'Text', description: 'Text processing' },
-        { type: 'llm', label: 'Language Model', description: 'AI processing' }
-      ]
-    },
-    {
-      title: 'Data Processing',
-      nodes: [
-        { type: 'filter', label: 'Filter', description: 'Data filtering' },
-        { type: 'transform', label: 'Transform', description: 'Data transformation' },
-        { type: 'conditional', label: 'Conditional', description: 'Logic branching' }
-      ]
-    },
-    {
-      title: 'External Services',
-      nodes: [
-        { type: 'api', label: 'API', description: 'HTTP requests' },
-        { type: 'database', label: 'Database', description: 'Data storage' }
-      ]
-    }
+  const [activeTab, setActiveTab] = useState('Objects');
+
+  const tabs = [
+    'Start',
+    'Objects', 
+    'Knowledge',
+    'AI',
+    'Integrations',
+    'Logic',
+    'Data',
+    'Chat'
   ];
 
+  const getNodesForTab = (tab) => {
+    switch(tab) {
+      case 'Objects':
+        return [
+          { type: 'customInput', label: 'Input', description: 'Pass data of different types into your pipeline.' },
+          { type: 'customOutput', label: 'Output', description: 'Export the results from your pipeline.' },
+          { type: 'text', label: 'Text', description: 'Add text to your pipeline.' },
+        ];
+      case 'AI':
+        return [
+          { type: 'llm', label: 'OpenAI', description: 'Query OpenAI with your data.' },
+          { type: 'api', label: 'Google Search', description: 'Query the Google Search search API.' },
+          { type: 'transform', label: 'Transformation', description: 'Use Python code to create a custom node.' }
+        ];
+      case 'Logic':
+        return [
+          { type: 'conditional', label: 'Conditional', description: 'Route data based on conditions.' },
+          { type: 'filter', label: 'Filter', description: 'Filter data based on criteria.' }
+        ];
+      case 'Data':
+        return [
+          { type: 'database', label: 'Database', description: 'Connect to databases.' },
+          { type: 'transform', label: 'Transform', description: 'Transform data structure.' }
+        ];
+      case 'Integrations':
+        return [
+          { type: 'api', label: 'API', description: 'Make HTTP requests.' },
+          { type: 'database', label: 'Database', description: 'Database operations.' }
+        ];
+      default:
+        return [];
+    }
+  };
+
   return (
-    <div style={{
-      background: `
-        linear-gradient(180deg, 
-          rgba(15, 23, 42, 0.95) 0%, 
-          rgba(30, 41, 59, 0.95) 50%,
-          rgba(15, 23, 42, 0.95) 100%
-        )
-      `,
-      backdropFilter: 'blur(20px)',
-      padding: '24px 32px',
-      borderBottom: '1px solid rgba(148, 163, 184, 0.08)',
-      position: 'relative'
-    }}>
-      {/* Subtle top border glow */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '1px',
-        background: 'linear-gradient(90deg, transparent, rgba(196, 181, 253, 0.3), transparent)'
-      }} />
+    <div className="toolbar-container">
+      {/* Tabs */}
+      <div className="toolbar-tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={`toolbar-tab ${activeTab === tab ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
 
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto'
-      }}>
-        {/* Header */}
-        <div style={{
-          marginBottom: '32px',
-          textAlign: 'center'
-        }}>
-          <h1 style={{
-            color: '#f8fafc',
-            fontSize: '28px',
-            fontWeight: '600',
-            marginBottom: '8px',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif',
-            letterSpacing: '-0.02em',
-            textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
-          }}>
-            Pipeline Builder
-          </h1>
-          <p style={{
-            color: 'rgba(226, 232, 240, 0.7)',
-            fontSize: '14px',
-            fontWeight: '400',
-            margin: 0,
-            letterSpacing: '0.025em'
-          }}>
-            Drag components to create sophisticated data processing workflows
-          </p>
-        </div>
-
-        {/* Node Categories */}
-        <div style={{
-          display: 'flex',
-          gap: '48px',
-          justifyContent: 'center',
-          flexWrap: 'wrap'
-        }}>
-          {nodeCategories.map((category, categoryIndex) => (
-            <div key={categoryIndex} style={{ 
-              minWidth: '280px',
-              maxWidth: '320px'
-            }}>
-              {/* Category Header */}
-              <div style={{
-                marginBottom: '16px',
-                paddingBottom: '8px',
-                borderBottom: '1px solid rgba(196, 181, 253, 0.1)'
-              }}>
-                <h3 style={{
-                  color: 'rgba(196, 181, 253, 0.9)',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  margin: 0,
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif'
-                }}>
-                  {category.title}
-                </h3>
-              </div>
-              
-              {/* Category Nodes */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                gap: '12px'
-              }}>
-                {category.nodes.map((node, nodeIndex) => (
-                  <DraggableNode 
-                    key={nodeIndex}
-                    type={node.type} 
-                    label={node.label}
-                    description={node.description}
-                  />
-                ))}
-              </div>
-            </div>
+      {/* Content */}
+      {getNodesForTab(activeTab).length > 0 && (
+        <div className="toolbar-content">
+          {getNodesForTab(activeTab).map((node, index) => (
+            <DraggableNode 
+              key={`${node.type}-${index}`}
+              type={node.type}
+              label={node.label}
+              description={node.description}
+            />
           ))}
         </div>
+      )}
 
-        {/* Bottom Instructions */}
-        <div style={{
-          marginTop: '32px',
-          textAlign: 'center',
-          paddingTop: '20px',
-          borderTop: '1px solid rgba(148, 163, 184, 0.08)'
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '32px',
-            flexWrap: 'wrap',
-            color: 'rgba(148, 163, 184, 0.7)',
-            fontSize: '11px',
-            fontWeight: '500',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em'
+      {activeTab === 'Start' && (
+        <div className="toolbar-content" style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: 'none' }}>
+          <div style={{ 
+            background: 'rgba(59, 130, 246, 0.1)', 
+            padding: '16px', 
+            borderRadius: '8px',
+            border: '1px solid rgba(59, 130, 246, 0.2)'
           }}>
-            <span>• Drag components to canvas</span>
-            <span>• Connect outputs to inputs</span>
-            <span>• Configure node properties</span>
-            <span>• Submit for validation</span>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: '600' }}>
+              Pipeline Builder
+            </h3>
+            <p style={{ margin: 0, fontSize: '12px', opacity: 0.8 }}>
+              Create powerful data processing workflows by dragging and connecting components.
+            </p>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

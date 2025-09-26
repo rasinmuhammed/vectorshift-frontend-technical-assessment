@@ -16,7 +16,7 @@ export const useTheme = () => {
 };
 
 function App() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false); // Default to light mode to match VectorShift
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -25,21 +25,58 @@ function App() {
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       <div className={`app ${isDark ? 'dark' : 'light'}`}>
+        {/* Header matching VectorShift exactly */}
         <div className="app-header">
-          <div className="app-title">
-            <h1>VectorShift Pipeline</h1>
+          <div className="header-left">
+            <div className="breadcrumb">
+              <span>Pipelines</span>
+              <span className="breadcrumb-separator">/</span>
+              <span>Untitled Pipeline</span>
+            </div>
           </div>
-          <button className="theme-toggle" onClick={toggleTheme}>
-            {isDark ? '☀️' : '🌙'}
-          </button>
-        </div>
-        <div className="app-content">
-          <PipelineToolbar />
-          <div className="pipeline-container">
-            <PipelineUI />
+          
+          <div className="header-right">
+            <div className="status-indicator draft">
+              <div className="status-dot"></div>
+              <span>Draft saved</span>
+            </div>
+            
+            <button className="header-button secondary" onClick={toggleTheme}>
+              {isDark ? '☀️ Light' : '🌙 Dark'}
+            </button>
+            
+            <button className="header-button secondary">
+              View Traces
+            </button>
+            
+            <button className="header-button secondary">
+              Version history
+            </button>
+            
+            <button className="header-button primary">
+              🚀 Deploy Changes
+            </button>
+            
+            <button className="header-button primary">
+              ▶️ Run
+            </button>
+            
+            <button className="header-button secondary">
+              📤 Export
+            </button>
           </div>
-          <SubmitButton />
         </div>
+
+        {/* Toolbar */}
+        <PipelineToolbar />
+        
+        {/* Main Pipeline Canvas */}
+        <div className="pipeline-canvas">
+          <PipelineUI />
+        </div>
+        
+        {/* Submit Button - positioned as overlay */}
+        <SubmitButton />
       </div>
     </ThemeContext.Provider>
   );

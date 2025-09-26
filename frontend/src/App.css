@@ -1,6 +1,5 @@
-/* App.css - Sophisticated Dark Theme Styling */
+/* App.css - VectorShift UI Match */
 
-/* Global Styles */
 * {
   box-sizing: border-box;
 }
@@ -11,278 +10,480 @@
   position: relative;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', sans-serif;
-  background: 
-    radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at top right, rgba(147, 51, 234, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at bottom, rgba(139, 126, 234, 0.08) 0%, transparent 50%),
-    linear-gradient(180deg, 
-      rgb(15, 23, 42) 0%, 
-      rgb(30, 41, 59) 25%,
-      rgb(51, 65, 85) 50%,
-      rgb(30, 41, 59) 75%,
-      rgb(15, 23, 42) 100%
-    );
-}
-
-.app-content {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* Sophisticated Node Hover Effects */
+/* Light Theme */
+.app.light {
+  background: #ffffff;
+  color: #1a202c;
+}
+
+.app.light .app-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.app.light .toolbar-container {
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.app.light .pipeline-canvas {
+  background: #ffffff;
+}
+
+.app.light .sophisticated-node {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #1a202c !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Dark Theme */
+.app.dark {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+.app.dark .app-header {
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+
+.app.dark .toolbar-container {
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+
+.app.dark .pipeline-canvas {
+  background: #0f172a;
+}
+
+.app.dark .sophisticated-node {
+  background: #1e293b !important;
+  border: 1px solid #475569 !important;
+  color: #f1f5f9 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Header Styles */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  height: 64px;
+  position: relative;
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.breadcrumb-separator {
+  color: #64748b;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-indicator.draft {
+  background: rgba(34, 197, 94, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.header-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-button.primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.header-button.primary:hover {
+  background: #2563eb;
+}
+
+.header-button.secondary {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+}
+
+.app.dark .header-button.secondary {
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+.header-button.secondary:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+/* Toolbar Container */
+.toolbar-container {
+  padding: 16px 24px;
+  border-bottom: 1px solid;
+  position: relative;
+  z-index: 5;
+}
+
+.toolbar-tabs {
+  display: flex;
+  gap: 0;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px;
+  width: fit-content;
+}
+
+.app.dark .toolbar-tabs {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.toolbar-tab {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+}
+
+.toolbar-tab.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.toolbar-tab:not(.active) {
+  color: #64748b;
+}
+
+.toolbar-tab:not(.active):hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.toolbar-content {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Pipeline Canvas */
+.pipeline-canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Node Styles - VectorShift Match */
 .sophisticated-node {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  min-width: 160px;
+  min-height: 80px;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: inherit;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: move;
 }
 
 .sophisticated-node:hover {
-  transform: translateY(-3px) scale(1.02) !important;
-  box-shadow: 
-    0 12px 48px rgba(0, 0, 0, 0.5),
-    0 4px 12px rgba(139, 126, 234, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* React Flow Customizations */
+.node-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.node-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.node-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.node-description {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.node-field {
+  margin-bottom: 12px;
+}
+
+.node-field:last-child {
+  margin-bottom: 0;
+}
+
+.node-field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.node-field-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.5);
+  transition: all 0.2s ease;
+}
+
+.app.dark .node-field-input {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+}
+
+.node-field-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.app.dark .node-field-input:focus {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.node-field-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* React Flow Customization */
 .react-flow__node {
   font-family: inherit;
 }
 
-.react-flow__edge-path {
-  stroke-width: 2;
-  stroke-dasharray: 8, 4;
-  filter: drop-shadow(0 0 6px rgba(196, 181, 253, 0.3));
-  animation: dash 20s linear infinite;
-}
-
-@keyframes dash {
-  to {
-    stroke-dashoffset: -240;
-  }
-}
-
-.react-flow__connectionline {
-  stroke-width: 2;
-  stroke: rgba(196, 181, 253, 0.7);
-  stroke-dasharray: 8, 4;
-  filter: drop-shadow(0 0 6px rgba(196, 181, 253, 0.4));
-}
-
 .react-flow__handle {
-  width: 10px;
-  height: 10px;
-  border: 2px solid rgba(139, 126, 234, 0.6);
+  width: 12px;
+  height: 12px;
+  border: 2px solid #3b82f6;
+  background: white;
   border-radius: 50%;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 8px rgba(196, 181, 253, 0.4);
 }
 
-.react-flow__handle:hover {
-  transform: scale(1.3);
-  box-shadow: 
-    0 0 16px rgba(196, 181, 253, 0.6),
-    0 0 32px rgba(196, 181, 253, 0.3);
-  border-color: rgba(196, 181, 253, 0.9);
+.app.dark .react-flow__handle {
+  background: #1e293b;
 }
 
-.react-flow__handle-connecting {
-  box-shadow: 
-    0 0 20px rgba(196, 181, 253, 0.8),
-    0 0 40px rgba(196, 181, 253, 0.4);
-  transform: scale(1.4);
+.react-flow__edge-path {
+  stroke: #64748b;
+  stroke-width: 2;
 }
 
-/* Controls Styling */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #3b82f6;
+  stroke-width: 3;
+}
+
 .react-flow__controls {
-  background: rgba(15, 23, 42, 0.9) !important;
-  border: 1px solid rgba(148, 163, 184, 0.15) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(12px) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-  padding: 4px !important;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.app.dark .react-flow__controls {
+  background: #1e293b;
+  border-color: #475569;
 }
 
 .react-flow__controls-button {
-  background: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(148, 163, 184, 0.1) !important;
-  border-radius: 8px !important;
-  color: rgba(226, 232, 240, 0.9) !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  width: 32px !important;
-  height: 32px !important;
-  margin: 2px !important;
+  background: transparent;
+  border: none;
+  color: #64748b;
 }
 
 .react-flow__controls-button:hover {
-  background: rgba(139, 126, 234, 0.2) !important;
-  border-color: rgba(139, 126, 234, 0.3) !important;
-  transform: scale(1.05) !important;
-  color: rgba(196, 181, 253, 1) !important;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
 }
 
-.react-flow__controls-button svg {
-  width: 14px !important;
-  height: 14px !important;
-}
-
-/* MiniMap Styling */
 .react-flow__minimap {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border: 1px solid rgba(148, 163, 184, 0.15) !important;
-  border-radius: 8px !important;
-  backdrop-filter: blur(12px) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
 
-.react-flow__minimap-mask {
-  fill: rgba(0, 0, 0, 0.7) !important;
+.app.dark .react-flow__minimap {
+  background: #1e293b;
+  border-color: #475569;
 }
 
-/* Form Elements */
-input, select, textarea {
-  background: rgba(15, 23, 42, 0.4) !important;
-  border: 1px solid rgba(196, 181, 253, 0.15) !important;
-  color: #f1f5f9 !important;
-  border-radius: 4px !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  font-family: inherit !important;
+/* Draggable Nodes in Toolbar */
+.draggable-node {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  min-height: 80px;
 }
 
-input:focus, select:focus, textarea:focus {
-  outline: none !important;
-  border-color: rgba(196, 181, 253, 0.4) !important;
-  background: rgba(15, 23, 42, 0.6) !important;
-  box-shadow: 
-    0 0 0 3px rgba(196, 181, 253, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.2) !important;
+.app.dark .draggable-node {
+  background: #1e293b;
+  border-color: #475569;
+  color: #f1f5f9;
 }
 
-input::placeholder, textarea::placeholder {
-  color: rgba(148, 163, 184, 0.6) !important;
+.draggable-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
 }
 
-/* Selection Styling */
-option {
-  background: rgb(30, 41, 59) !important;
-  color: #f1f5f9 !important;
-  border: none !important;
+.draggable-node:active {
+  cursor: grabbing;
+}
+
+.draggable-node-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.draggable-node-title {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.draggable-node-desc {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Node Type Colors */
+.node-input { background: #3b82f6; }
+.node-output { background: #10b981; }
+.node-text { background: #8b5cf6; }
+.node-llm { background: #f59e0b; }
+.node-api { background: #ef4444; }
+.node-filter { background: #06b6d4; }
+.node-transform { background: #84cc16; }
+.node-database { background: #6366f1; }
+.node-conditional { background: #f97316; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 12px 16px;
+    height: 56px;
+  }
+  
+  .toolbar-container {
+    padding: 12px 16px;
+  }
+  
+  .toolbar-content {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+  
+  .sophisticated-node {
+    min-width: 140px;
+    padding: 12px;
+  }
 }
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
-  border-radius: 4px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
-  border-radius: 4px;
-  transition: background 0.2s ease;
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.5);
-}
-
-::-webkit-scrollbar-corner {
-  background: rgba(15, 23, 42, 0.6);
-}
-
-/* Text Selection */
-::selection {
-  background: rgba(196, 181, 253, 0.3);
-  color: #f8fafc;
-}
-
-::-moz-selection {
-  background: rgba(196, 181, 253, 0.3);
-  color: #f8fafc;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .sophisticated-node {
-    min-width: 200px !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .app {
-    height: 100vh;
-  }
-  
-  .sophisticated-node {
-    min-width: 180px !important;
-    padding: 16px !important;
-  }
-  
-  .react-flow__controls {
-    bottom: 80px !important;
-  }
-  
-  .react-flow__minimap {
-    width: 120px !important;
-    height: 80px !important;
-  }
-}
-
-/* Loading States */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
-}
-
-.loading {
-  animation: pulse 2s cubic-bezier(0.4, 0.6, 0.6, 1) infinite;
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .react-flow__edge-path {
-    animation: none !important;
-  }
-}
-
-/* Focus Indicators */
-button:focus-visible {
-  outline: 2px solid rgba(196, 181, 253, 0.8);
-  outline-offset: 2px;
-}
-
-.react-flow__handle:focus-visible {
-  outline: 2px solid rgba(196, 181, 253, 0.8);
-  outline-offset: 2px;
-}
-
-/* High Contrast Mode Support */
-@media (prefers-contrast: high) {
-  .sophisticated-node {
-    border-width: 2px !important;
-  }
-  
-  .react-flow__edge-path {
-    stroke-width: 3px !important;
-  }
-  
-  .react-flow__handle {
-    border-width: 3px !important;
-  }
+  background: rgba(100, 116, 139, 0.5);
 }
