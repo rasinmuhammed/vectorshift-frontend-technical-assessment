@@ -1,47 +1,48 @@
-// inputNode.js
+import { BaseNode } from './BaseNode.js';
+import { useStore } from '../store';
 
-import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
-
+// Input Node
 export const InputNode = ({ id, data }) => {
-  const [currName, setCurrName] = useState(data?.inputName || id.replace('customInput-', 'input_'));
-  const [inputType, setInputType] = useState(data.inputType || 'Text');
+  const updateNodeField = useStore((state) => state.updateNodeField);
 
-  const handleNameChange = (e) => {
-    setCurrName(e.target.value);
-  };
-
-  const handleTypeChange = (e) => {
-    setInputType(e.target.value);
+  const nodeConfig = {
+    type: 'input',
+    title: 'Input',
+    description: 'Data input source',
+    width: 200,
+    height: 120,
+    fields: [
+      {
+        name: 'inputName',
+        label: 'Name',
+        type: 'text',
+        default: id.replace('customInput-', 'input_'),
+        placeholder: 'Enter input name'
+      },
+      {
+        name: 'inputType',
+        label: 'Type',
+        type: 'select',
+        default: 'Text',
+        options: [
+          { value: 'Text', label: 'Text' },
+          { value: 'File', label: 'File' },
+          { value: 'Number', label: 'Number' },
+          { value: 'Boolean', label: 'Boolean' }
+        ]
+      }
+    ],
+    outputs: [
+      { id: 'value', label: 'Value' }
+    ]
   };
 
   return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <div>
-        <span>Input</span>
-      </div>
-      <div>
-        <label>
-          Name:
-          <input 
-            type="text" 
-            value={currName} 
-            onChange={handleNameChange} 
-          />
-        </label>
-        <label>
-          Type:
-          <select value={inputType} onChange={handleTypeChange}>
-            <option value="Text">Text</option>
-            <option value="File">File</option>
-          </select>
-        </label>
-      </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        id={`${id}-value`}
-      />
-    </div>
+    <BaseNode
+      id={id}
+      data={data}
+      nodeConfig={nodeConfig}
+      onDataChange={updateNodeField}
+    />
   );
-}
+};

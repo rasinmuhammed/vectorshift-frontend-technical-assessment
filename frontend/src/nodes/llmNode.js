@@ -1,34 +1,50 @@
-// llmNode.js
-
-import { Handle, Position } from 'reactflow';
+import { BaseNode } from './BaseNode.js';
+import { useStore } from '../store';
 
 export const LLMNode = ({ id, data }) => {
+  const updateNodeField = useStore((state) => state.updateNodeField);
+
+  const nodeConfig = {
+    type: 'llm',
+    title: 'LLM',
+    description: 'Large Language Model',
+    width: 220,
+    height: 140,
+    fields: [
+      {
+        name: 'model',
+        label: 'Model',
+        type: 'select',
+        default: 'gpt-3.5-turbo',
+        options: [
+          { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
+          { value: 'gpt-4', label: 'GPT-4' },
+          { value: 'claude-3', label: 'Claude 3' }
+        ]
+      },
+      {
+        name: 'temperature',
+        label: 'Temperature',
+        type: 'text',
+        default: '0.7',
+        placeholder: '0.0 - 1.0'
+      }
+    ],
+    inputs: [
+      { id: 'system', label: 'System' },
+      { id: 'prompt', label: 'Prompt' }
+    ],
+    outputs: [
+      { id: 'response', label: 'Response' }
+    ]
+  };
 
   return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <Handle
-        type="target"
-        position={Position.Left}
-        id={`${id}-system`}
-        style={{top: `${100/3}%`}}
-      />
-      <Handle
-        type="target"
-        position={Position.Left}
-        id={`${id}-prompt`}
-        style={{top: `${200/3}%`}}
-      />
-      <div>
-        <span>LLM</span>
-      </div>
-      <div>
-        <span>This is a LLM.</span>
-      </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        id={`${id}-response`}
-      />
-    </div>
+    <BaseNode
+      id={id}
+      data={data}
+      nodeConfig={nodeConfig}
+      onDataChange={updateNodeField}
+    />
   );
-}
+};

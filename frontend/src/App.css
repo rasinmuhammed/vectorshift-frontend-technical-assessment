@@ -1,0 +1,288 @@
+/* App.css - Sophisticated Dark Theme Styling */
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+.app {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  background: 
+    radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at top right, rgba(147, 51, 234, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(139, 126, 234, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, 
+      rgb(15, 23, 42) 0%, 
+      rgb(30, 41, 59) 25%,
+      rgb(51, 65, 85) 50%,
+      rgb(30, 41, 59) 75%,
+      rgb(15, 23, 42) 100%
+    );
+}
+
+.app-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sophisticated Node Hover Effects */
+.sophisticated-node {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.sophisticated-node:hover {
+  transform: translateY(-3px) scale(1.02) !important;
+  box-shadow: 
+    0 12px 48px rgba(0, 0, 0, 0.5),
+    0 4px 12px rgba(139, 126, 234, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+/* React Flow Customizations */
+.react-flow__node {
+  font-family: inherit;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+  stroke-dasharray: 8, 4;
+  filter: drop-shadow(0 0 6px rgba(196, 181, 253, 0.3));
+  animation: dash 20s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -240;
+  }
+}
+
+.react-flow__connectionline {
+  stroke-width: 2;
+  stroke: rgba(196, 181, 253, 0.7);
+  stroke-dasharray: 8, 4;
+  filter: drop-shadow(0 0 6px rgba(196, 181, 253, 0.4));
+}
+
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(139, 126, 234, 0.6);
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 8px rgba(196, 181, 253, 0.4);
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.3);
+  box-shadow: 
+    0 0 16px rgba(196, 181, 253, 0.6),
+    0 0 32px rgba(196, 181, 253, 0.3);
+  border-color: rgba(196, 181, 253, 0.9);
+}
+
+.react-flow__handle-connecting {
+  box-shadow: 
+    0 0 20px rgba(196, 181, 253, 0.8),
+    0 0 40px rgba(196, 181, 253, 0.4);
+  transform: scale(1.4);
+}
+
+/* Controls Styling */
+.react-flow__controls {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border: 1px solid rgba(148, 163, 184, 0.15) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  padding: 4px !important;
+}
+
+.react-flow__controls-button {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(148, 163, 184, 0.1) !important;
+  border-radius: 8px !important;
+  color: rgba(226, 232, 240, 0.9) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  width: 32px !important;
+  height: 32px !important;
+  margin: 2px !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(139, 126, 234, 0.2) !important;
+  border-color: rgba(139, 126, 234, 0.3) !important;
+  transform: scale(1.05) !important;
+  color: rgba(196, 181, 253, 1) !important;
+}
+
+.react-flow__controls-button svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* MiniMap Styling */
+.react-flow__minimap {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border: 1px solid rgba(148, 163, 184, 0.15) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Form Elements */
+input, select, textarea {
+  background: rgba(15, 23, 42, 0.4) !important;
+  border: 1px solid rgba(196, 181, 253, 0.15) !important;
+  color: #f1f5f9 !important;
+  border-radius: 4px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-family: inherit !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: rgba(196, 181, 253, 0.4) !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  box-shadow: 
+    0 0 0 3px rgba(196, 181, 253, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(148, 163, 184, 0.6) !important;
+}
+
+/* Selection Styling */
+option {
+  background: rgb(30, 41, 59) !important;
+  color: #f1f5f9 !important;
+  border: none !important;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+/* Text Selection */
+::selection {
+  background: rgba(196, 181, 253, 0.3);
+  color: #f8fafc;
+}
+
+::-moz-selection {
+  background: rgba(196, 181, 253, 0.3);
+  color: #f8fafc;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .sophisticated-node {
+    min-width: 200px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    height: 100vh;
+  }
+  
+  .sophisticated-node {
+    min-width: 180px !important;
+    padding: 16px !important;
+  }
+  
+  .react-flow__controls {
+    bottom: 80px !important;
+  }
+  
+  .react-flow__minimap {
+    width: 120px !important;
+    height: 80px !important;
+  }
+}
+
+/* Loading States */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.loading {
+  animation: pulse 2s cubic-bezier(0.4, 0.6, 0.6, 1) infinite;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .react-flow__edge-path {
+    animation: none !important;
+  }
+}
+
+/* Focus Indicators */
+button:focus-visible {
+  outline: 2px solid rgba(196, 181, 253, 0.8);
+  outline-offset: 2px;
+}
+
+.react-flow__handle:focus-visible {
+  outline: 2px solid rgba(196, 181, 253, 0.8);
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .sophisticated-node {
+    border-width: 2px !important;
+  }
+  
+  .react-flow__edge-path {
+    stroke-width: 3px !important;
+  }
+  
+  .react-flow__handle {
+    border-width: 3px !important;
+  }
+}

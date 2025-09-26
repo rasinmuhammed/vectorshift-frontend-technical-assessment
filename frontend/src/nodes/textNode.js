@@ -1,35 +1,35 @@
-// textNode.js
-
-import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+import { BaseNode } from './BaseNode.js';
+import { useStore } from '../store';
 
 export const TextNode = ({ id, data }) => {
-  const [currText, setCurrText] = useState(data?.text || '{{input}}');
+  const updateNodeField = useStore((state) => state.updateNodeField);
 
-  const handleTextChange = (e) => {
-    setCurrText(e.target.value);
+  const nodeConfig = {
+    type: 'text',
+    title: 'Text',
+    description: 'Text processing and templating',
+    width: 200,
+    height: 100,
+    fields: [
+      {
+        name: 'text',
+        label: 'Text',
+        type: 'textarea',
+        default: '{{input}}',
+        placeholder: 'Enter text with variables like {{variable}}'
+      }
+    ],
+    outputs: [
+      { id: 'output', label: 'Output' }
+    ]
   };
 
   return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <div>
-        <span>Text</span>
-      </div>
-      <div>
-        <label>
-          Text:
-          <input 
-            type="text" 
-            value={currText} 
-            onChange={handleTextChange} 
-          />
-        </label>
-      </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        id={`${id}-output`}
-      />
-    </div>
+    <BaseNode
+      id={id}
+      data={data}
+      nodeConfig={nodeConfig}
+      onDataChange={updateNodeField}
+    />
   );
-}
+};
