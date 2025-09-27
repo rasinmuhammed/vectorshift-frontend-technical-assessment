@@ -1,12 +1,13 @@
-// frontend/src/nodes/BaseNode.js
-
-import { useState } from 'react';
+// Enhanced BaseNode Component with Premium Styling
+import React, { useState } from 'react';
 import { Handle, Position } from 'reactflow';
-import { useTheme } from '../App'; // Import the useTheme hook
+import { useTheme } from '../App';
 import '../App.css';
+
 export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
-  const { isDark } = useTheme(); // Use the theme context
+  const { isDark } = useTheme();
   const [nodeData, setNodeData] = useState(data || {});
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleFieldChange = (field, value) => {
     const newData = { ...nodeData, [field]: value };
@@ -16,135 +17,251 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
     }
   };
 
-  const nodeStyles = {
-    light: {
-      backgroundColor: '#ffffff',
-      border: '1px solid #e2e8f0',
-      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-      color: '#0f172a',
-    },
-    dark: {
-      backgroundColor: '#1e293b',
-      border: '1px solid #475569',
-      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3)',
-      color: '#f8fafc',
-    }
-  };
-  
-  const currentStyle = isDark ? nodeStyles.dark : nodeStyles.light;
-
   return (
     <div 
       className="sophisticated-node"
       style={{
-        width: nodeConfig.width || 240,
-        ...currentStyle,
+        width: nodeConfig.width || 220,
+        minHeight: nodeConfig.height || 120,
+        position: 'relative',
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-        {/* Node Title */}
+      {/* Premium Node Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '12px',
+        paddingBottom: '10px',
+        borderBottom: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+      }}>
         <div style={{
-            fontSize: '13px',
-            fontWeight: '600',
-            marginBottom: '8px',
-            paddingBottom: '8px',
-            borderBottom: isDark ? '1px solid #334155' : '1px solid #e2e8f0',
-            color: isDark ? '#f1f5f9' : '#1e293b',
-            textAlign: 'left',
+          fontSize: '13px',
+          fontWeight: '700',
+          color: isDark ? '#f4f3ff' : '#0f172a',
+          letterSpacing: '0.025em',
         }}>
-            {nodeConfig.title}
+          {nodeConfig.title}
         </div>
+        
+        {/* Node Type Indicator */}
+        <div style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          background: isDark ? '#6913e0' : '#3b82f6',
+          boxShadow: `0 0 8px ${isDark ? '#6913e0' : '#3b82f6'}`,
+          opacity: isHovered ? 1 : 0.6,
+          transition: 'all 0.2s ease',
+        }} />
+      </div>
 
-        {/* Node Description */}
-        {nodeConfig.description && (
-            <div style={{
-                fontSize: '11px',
-                color: isDark ? 'rgba(241, 245, 249, 0.7)' : 'rgba(30, 41, 59, 0.7)',
-                marginBottom: '12px',
-                lineHeight: '1.4',
-                fontWeight: '400'
+      {/* Node Description */}
+      {nodeConfig.description && (
+        <div style={{
+          fontSize: '11px',
+          color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
+          marginBottom: '16px',
+          lineHeight: '1.5',
+          fontWeight: '400',
+        }}>
+          {nodeConfig.description}
+        </div>
+      )}
+
+      {/* Dynamic Fields */}
+      <div style={{ marginBottom: '8px' }}>
+        {nodeConfig.fields?.map((field, index) => (
+          <div key={index} style={{ marginBottom: '12px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '11px',
+              marginBottom: '6px',
+              fontWeight: '600',
+              color: isDark ? 'rgba(244, 243, 255, 0.9)' : 'rgba(15, 23, 42, 0.9)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
             }}>
-                {nodeConfig.description}
-            </div>
-        )}
-
-        {/* Dynamic Fields */}
-        <div style={{ marginBottom: '4px' }}>
-            {nodeConfig.fields?.map((field, index) => (
-                <div key={index} style={{ marginBottom: '10px' }}>
-                    <label style={{
-                        display: 'block',
-                        fontSize: '11px',
-                        marginBottom: '4px',
-                        fontWeight: '500',
-                        color: isDark ? 'rgba(241, 245, 249, 0.8)' : 'rgba(30, 41, 59, 0.8)',
-                    }}>
-                        {field.label}
-                    </label>
-                    {field.type === 'text' || field.type === 'textarea' ? (
-                        <textarea
-                            value={nodeData[field.name] || field.default || ''}
-                            onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                            rows={field.type === 'textarea' ? 3 : 1}
-                            style={{
-                                width: '100%',
-                                padding: '6px 10px',
-                                border: `1px solid ${isDark ? '#475569' : '#d1d5db'}`,
-                                borderRadius: '4px',
-                                background: isDark ? '#334155' : '#f8fafc',
-                                color: isDark ? '#f1f5f9' : '#1e293b',
-                                fontSize: '12px',
-                                fontFamily: 'inherit',
-                                resize: field.type === 'textarea' ? 'vertical' : 'none',
-                                minHeight: field.type === 'textarea' ? '50px' : 'auto',
-                            }}
-                            placeholder={field.placeholder}
-                        />
-                    ) : field.type === 'select' ? (
-                        <select
-                            value={nodeData[field.name] || field.default || ''}
-                            onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                            style={{
-                                width: '100%',
-                                padding: '6px 10px',
-                                border: `1px solid ${isDark ? '#475569' : '#d1d5db'}`,
-                                borderRadius: '4px',
-                                background: isDark ? '#334155' : '#f8fafc',
-                                color: isDark ? '#f1f5f9' : '#1e293b',
-                                fontSize: '12px',
-                                fontFamily: 'inherit',
-                            }}
-                        >
-                            {field.options?.map((option, optIndex) => (
-                                <option key={optIndex} value={option.value} style={{ background: isDark ? '#1e293b' : '#ffffff' }}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    ) : null}
-                </div>
-            ))}
-        </div>
-
-        {/* Input Handles (Left) & Output Handles (Right) */}
-        {nodeConfig.inputs?.map((input, index) => (
-            <Handle
-                key={`input-${index}`}
-                type="target"
-                position={Position.Left}
-                id={`${id}-${input.id}`}
-                style={{ top: `${80 + index * 40}px`, background: isDark ? '#475569' : '#e2e8f0', border: `2px solid ${isDark ? '#94a3b8' : '#cbd5e1'}` }}
-            />
+              {field.label}
+            </label>
+            
+            {field.type === 'text' || field.type === 'textarea' ? (
+              <textarea
+                value={nodeData[field.name] || field.default || ''}
+                onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                rows={field.type === 'textarea' ? 3 : 1}
+                placeholder={field.placeholder}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
+                  borderRadius: '6px',
+                  background: isDark 
+                    ? 'rgba(31, 27, 46, 0.8)' 
+                    : 'rgba(248, 250, 252, 0.8)',
+                  color: isDark ? '#f4f3ff' : '#0f172a',
+                  fontSize: '12px',
+                  fontFamily: 'inherit',
+                  resize: field.type === 'textarea' ? 'vertical' : 'none',
+                  minHeight: field.type === 'textarea' ? '60px' : 'auto',
+                  outline: 'none',
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(10px)',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = isDark ? '#6913e0' : '#3b82f6';
+                  e.target.style.boxShadow = `0 0 0 3px ${isDark ? 'rgba(105, 19, 224, 0.1)' : 'rgba(59, 130, 246, 0.1)'}`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.3)';
+                  e.target.style.boxShadow = 'none';
+                }}
+              />
+            ) : field.type === 'select' ? (
+              <select
+                value={nodeData[field.name] || field.default || ''}
+                onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
+                  borderRadius: '6px',
+                  background: isDark 
+                    ? 'rgba(31, 27, 46, 0.8)' 
+                    : 'rgba(248, 250, 252, 0.8)',
+                  color: isDark ? '#f4f3ff' : '#0f172a',
+                  fontSize: '12px',
+                  fontFamily: 'inherit',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(10px)',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = isDark ? '#6913e0' : '#3b82f6';
+                  e.target.style.boxShadow = `0 0 0 3px ${isDark ? 'rgba(105, 19, 224, 0.1)' : 'rgba(59, 130, 246, 0.1)'}`;
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.3)';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                {field.options?.map((option, optIndex) => (
+                  <option 
+                    key={optIndex} 
+                    value={option.value}
+                    style={{ 
+                      background: isDark ? '#1f1b2e' : '#ffffff',
+                      color: isDark ? '#f4f3ff' : '#0f172a'
+                    }}
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+          </div>
         ))}
+      </div>
 
-        {nodeConfig.outputs?.map((output, index) => (
-            <Handle
-                key={`output-${index}`}
-                type="source"
-                position={Position.Right}
-                id={`${id}-${output.id}`}
-                style={{ top: `${80 + index * 40}px`, background: isDark ? '#475569' : '#e2e8f0', border: `2px solid ${isDark ? '#94a3b8' : '#cbd5e1'}` }}
-            />
-        ))}
+      {/* Input Handles (Left Side) */}
+      {nodeConfig.inputs?.map((input, index) => (
+        <React.Fragment key={`input-${index}`}>
+          <Handle
+            type="target"
+            position={Position.Left}
+            id={`${id}-${input.id}`}
+            style={{ 
+              top: `${60 + index * 32}px`,
+              background: isDark ? '#1f1b2e' : '#ffffff',
+              border: `2px solid ${isDark ? '#6913e0' : '#3b82f6'}`,
+              width: '12px',
+              height: '12px',
+              borderRadius: '50%',
+              boxShadow: `0 0 8px ${isDark ? 'rgba(105, 19, 224, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
+              transition: 'all 0.2s ease',
+            }}
+          />
+          {/* Handle Label */}
+          <div style={{
+            position: 'absolute',
+            left: '-8px',
+            top: `${52 + index * 32}px`,
+            transform: 'translateX(-100%)',
+            fontSize: '10px',
+            fontWeight: '500',
+            color: isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)',
+            backgroundColor: isDark ? 'rgba(31, 27, 46, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            opacity: isHovered ? 1 : 0,
+            transition: 'all 0.2s ease',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+          }}>
+            {input.label}
+          </div>
+        </React.Fragment>
+      ))}
+
+      {/* Output Handles (Right Side) */}
+      {nodeConfig.outputs?.map((output, index) => (
+        <React.Fragment key={`output-${index}`}>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id={`${id}-${output.id}`}
+            style={{ 
+              top: `${60 + index * 32}px`,
+              background: isDark ? '#1f1b2e' : '#ffffff',
+              border: `2px solid ${isDark ? '#6913e0' : '#3b82f6'}`,
+              width: '12px',
+              height: '12px',
+              borderRadius: '50%',
+              boxShadow: `0 0 8px ${isDark ? 'rgba(105, 19, 224, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
+              transition: 'all 0.2s ease',
+            }}
+          />
+          {/* Handle Label */}
+          <div style={{
+            position: 'absolute',
+            right: '-8px',
+            top: `${52 + index * 32}px`,
+            transform: 'translateX(100%)',
+            fontSize: '10px',
+            fontWeight: '500',
+            color: isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)',
+            backgroundColor: isDark ? 'rgba(31, 27, 46, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            padding: '2px 6px',
+            borderRadius: '4px',
+            opacity: isHovered ? 1 : 0,
+            transition: 'all 0.2s ease',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+          }}>
+            {output.label}
+          </div>
+        </React.Fragment>
+      ))}
+
+      {/* Premium Node Glow Effect */}
+      {isHovered && (
+        <div style={{
+          position: 'absolute',
+          top: '-2px',
+          left: '-2px',
+          right: '-2px',
+          bottom: '-2px',
+          borderRadius: '14px',
+          background: `linear-gradient(135deg, ${
+            isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'
+          }, transparent)`,
+          pointerEvents: 'none',
+          zIndex: -1,
+        }} />
+      )}
     </div>
   );
 };
