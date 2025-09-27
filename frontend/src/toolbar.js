@@ -27,7 +27,7 @@ export const PipelineToolbar = () => {
         ];
       case 'AI':
         return [
-          { type: 'llm', label: 'OpenAI', description: 'Query OpenAI with your data.' },
+          { type: 'llm', label: 'LLM', description: 'Query LLM with your data.' },
           { type: 'api', label: 'Google Search', description: 'Query the Google Search search API.' },
           { type: 'transform', label: 'Transformation', description: 'Use Python code to create a custom node.' }
         ];
@@ -46,6 +46,10 @@ export const PipelineToolbar = () => {
           { type: 'api', label: 'API', description: 'Make HTTP requests.' },
           { type: 'database', label: 'Database', description: 'Database operations.' }
         ];
+      case 'Knowledge':
+        return [
+            { type: 'api', label: 'Google Search', description: 'Query the Google Search search API.' },
+        ]
       default:
         return [];
     }

@@ -1,4 +1,9 @@
-// draggableNode.js - VectorShift Style Draggable Nodes
+import {
+  FiLogIn, FiLogOut, FiType, FiCpu, FiGitPullRequest,
+  FiFilter, FiCode, FiDatabase, FiGitBranch, FiGlobe
+} from 'react-icons/fi';
+
+import './App.css'
 
 export const DraggableNode = ({ type, label, description }) => {
   const onDragStart = (event, nodeType) => {
@@ -9,33 +14,19 @@ export const DraggableNode = ({ type, label, description }) => {
   };
 
   const getNodeIcon = (type) => {
+    const iconProps = { size: 16, style: { color: 'currentColor' } };
     const icons = {
-      'customInput': '📄',
-      'customOutput': '📤',
-      'text': '📝',
-      'llm': '🤖',
-      'api': '🔗',
-      'filter': '🔍',
-      'transform': '⚡',
-      'database': '🗄️',
-      'conditional': '🔀'
+      'customInput': <FiLogIn {...iconProps} />,
+      'customOutput': <FiLogOut {...iconProps} />,
+      'text': <FiType {...iconProps} />,
+      'llm': <FiCpu {...iconProps} />,
+      'api': <FiGlobe {...iconProps} />,
+      'filter': <FiFilter {...iconProps} />,
+      'transform': <FiCode {...iconProps} />,
+      'database': <FiDatabase {...iconProps} />,
+      'conditional': <FiGitBranch {...iconProps} />
     };
-    return icons[type] || '⚙️';
-  };
-
-  const getNodeColor = (type) => {
-    const colors = {
-      'customInput': '#3b82f6',
-      'customOutput': '#10b981', 
-      'text': '#8b5cf6',
-      'llm': '#f59e0b',
-      'api': '#ef4444',
-      'filter': '#06b6d4',
-      'transform': '#84cc16',
-      'database': '#6366f1',
-      'conditional': '#f97316'
-    };
-    return colors[type] || '#64748b';
+    return icons[type] || <FiGitPullRequest {...iconProps} />;
   };
 
   return (
@@ -43,26 +34,14 @@ export const DraggableNode = ({ type, label, description }) => {
       className="draggable-node"
       onDragStart={(event) => onDragStart(event, type)}
       onDragEnd={(event) => (event.target.style.cursor = 'grab')}
-      style={{
-        cursor: 'grab'
-      }}
       draggable
     >
-      <div 
-        className="draggable-node-icon"
-        style={{
-          background: getNodeColor(type)
-        }}
-      >
+      <div className={`draggable-node-icon node-type--${type}`}>
         {getNodeIcon(type)}
       </div>
-      
-      <div className="draggable-node-title">
-        {label}
-      </div>
-      
-      <div className="draggable-node-desc">
-        {description}
+      <div className="draggable-node-info">
+        <div className="draggable-node-label">{label}</div>
+        <div className="draggable-node-description">{description}</div>
       </div>
     </div>
   );

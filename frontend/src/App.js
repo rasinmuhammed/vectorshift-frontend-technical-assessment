@@ -3,6 +3,7 @@ import { PipelineToolbar } from './toolbar';
 import { PipelineUI } from './ui';
 import { SubmitButton } from './submit';
 import './App.css';
+import { FiMoon, FiPlay, FiSun,  FiExternalLink, FiUploadCloud } from 'react-icons/fi';
 
 // Theme Context
 const ThemeContext = createContext();
@@ -21,6 +22,8 @@ function App() {
   const toggleTheme = () => {
     setIsDark(!isDark);
   };
+
+  const iconProps = { size: 14, style: { marginRight: '6px' } };
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
@@ -42,7 +45,11 @@ function App() {
             </div>
             
             <button className="header-button secondary" onClick={toggleTheme}>
-              {isDark ? '☀️ Light' : '🌙 Dark'}
+              {isDark ? (
+                <><FiSun {...iconProps} /> Light</>
+              ) : (
+                <><FiMoon {...iconProps} /> Dark</>
+              )}
             </button>
             
             <button className="header-button secondary">
@@ -54,15 +61,15 @@ function App() {
             </button>
             
             <button className="header-button primary">
-              🚀 Deploy Changes
+              <FiUploadCloud {...iconProps} /> Deploy Changes
             </button>
             
             <button className="header-button primary">
-              ▶️ Run
+              <FiPlay {...iconProps} /> Run
             </button>
             
             <button className="header-button secondary">
-              📤 Export
+              <FiExternalLink {...iconProps} /> Export
             </button>
           </div>
         </div>
