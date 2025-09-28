@@ -21,7 +21,6 @@ export const DraggableNode = ({ type, label, description }) => {
     event.target.style.cursor = 'grabbing';
     event.target.style.opacity = '0.8';
     
-    // Create a drag image (optional - for better visual feedback)
     const dragImage = event.target.cloneNode(true);
     dragImage.style.transform = 'rotate(5deg)';
     dragImage.style.opacity = '0.8';

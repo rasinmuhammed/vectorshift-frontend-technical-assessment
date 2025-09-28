@@ -1,4 +1,3 @@
-// frontend/src/store.js
 import { create } from 'zustand';
 import {
   addEdge,
@@ -98,6 +97,21 @@ const useStore = create((set, get) => ({
     });
     set({ nodes: updatedNodes });
   },
+  
+  updateNodeDimensions: (nodeId, dimensions) => {
+    const { nodes } = get();
+    const updatedNodes = nodes.map((node) => {
+      if (node.id === nodeId) {
+        return {
+          ...node,
+          style: { ...node.style, ...dimensions },
+        };
+      }
+      return node;
+    });
+    set({ nodes: updatedNodes });
+  },
+
 
   // Helper function to get all nodes and edges for export/validation
   getFlow: () => {

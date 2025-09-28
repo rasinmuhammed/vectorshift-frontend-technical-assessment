@@ -1,30 +1,47 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Handle, Position } from 'reactflow';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Handle, Position, useUpdateNodeInternals } from 'reactflow';
 import { useTheme } from '../App';
 import { useStore } from '../store';
-import { 
-  FiSettings, 
-  FiTrash2, 
-  FiChevronDown, 
+import {
+  FiSettings,
+  FiTrash2,
+  FiChevronDown,
   FiChevronUp,
   FiX,
   FiCheck,
-  FiRotateCcw
+  FiRotateCcw,
+  FiTag
 } from 'react-icons/fi';
 import '../App.css';
+
+// Create a hidden div to measure text dimensions
+const hiddenTextareaStyle = {
+  visibility: 'hidden',
+  position: 'absolute',
+  top: '-9999px',
+  left: '-9999px',
+  whiteSpace: 'pre-wrap',
+  wordWrap: 'break-word',
+};
+
 
 export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
   const { isDark, isMobile } = useTheme();
   const deleteNode = useStore((state) => state.deleteNode);
-  
+  const updateNodeDimensions = useStore((state) => state.updateNodeDimensions);
+  const updateNodeInternals = useUpdateNodeInternals();
+
+
   const [nodeData, setNodeData] = useState(data || {});
   const [isHovered, setIsHovered] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(data?.isCollapsed || false);
   const [showSettings, setShowSettings] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [tempNodeData, setTempNodeData] = useState({});
-  
+
   const settingsRef = useRef(null);
+  const textareaRef = useRef(null);
+
 
   const handleFieldChange = (field, value) => {
     const newData = { ...nodeData, [field]: value };
@@ -105,9 +122,38 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
     }
   }, [showSettings]);
 
-  const nodeWidth = nodeConfig.width || 180;
+  const [dimensions, setDimensions] = useState({
+    width: nodeConfig.width || 180,
+    height: nodeConfig.height || 100,
+  });
+
+  const updateNodeSize = useCallback(() => {
+    if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.width = 'auto';
+
+        const scrollHeight = textareaRef.current.scrollHeight;
+        const scrollWidth = textareaRef.current.scrollWidth;
+
+        const newHeight = Math.max(nodeConfig.height || 100, scrollHeight + 120);
+        const newWidth = Math.max(nodeConfig.width || 180, scrollWidth + 40);
+
+        setDimensions({ width: newWidth, height: newHeight });
+        updateNodeDimensions(id, { width: newWidth, height: newHeight });
+
+        textareaRef.current.style.height = `${scrollHeight}px`;
+    }
+}, [id, nodeConfig.height, nodeConfig.width, updateNodeDimensions]);
+
+
+  useEffect(() => {
+    updateNodeSize();
+    updateNodeInternals(id);
+  }, [data.text, isCollapsed, updateNodeSize, id, updateNodeInternals]);
+
+  const nodeWidth = dimensions.width;
   const collapsedHeight = 50;
-  const expandedHeight = nodeConfig.height || 100;
+  const expandedHeight = dimensions.height;
   const nodeHeight = isCollapsed ? collapsedHeight : expandedHeight;
 
   const controlButtonStyle = {
@@ -128,7 +174,7 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
 
   return (
     <>
-      <div 
+      <div
         className="sophisticated-node"
         style={{
           width: nodeWidth,
@@ -157,7 +203,7 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
           }}>
             {nodeConfig.title}
           </div>
-          
+
           {/* Node Controls */}
           <div style={{
             display: 'flex',
@@ -237,6 +283,28 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
                 {nodeConfig.description}
               </div>
             )}
+            
+            {/* Display detected variables */}
+            {nodeConfig.variables && nodeConfig.variables.length > 0 && (
+                <div style={{ marginBottom: '10px', display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    {nodeConfig.variables.map((variable, index) => (
+                        <div key={index} style={{
+                            background: isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.1)',
+                            color: isDark ? '#a78bfa' : '#3b82f6',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '10px',
+                            fontWeight: '500',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                        }}>
+                            <FiTag size={10} />
+                            {variable}
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* Dynamic Fields */}
             <div style={{ marginBottom: '6px' }}>
@@ -253,9 +321,10 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
                   }}>
                     {field.label}
                   </label>
-                  
+
                   {field.type === 'text' || field.type === 'textarea' ? (
                     <textarea
+                      ref={textareaRef}
                       value={nodeData[field.name] || field.default || ''}
                       onChange={(e) => handleFieldChange(field.name, e.target.value)}
                       rows={field.type === 'textarea' ? 2 : 1}
@@ -312,10 +381,10 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
                       }}
                     >
                       {field.options?.map((option, optIndex) => (
-                        <option 
-                          key={optIndex} 
+                        <option
+                          key={optIndex}
                           value={option.value}
-                          style={{ 
+                          style={{
                             background: isDark ? '#1f1b2e' : '#ffffff',
                             color: isDark ? '#f4f3ff' : '#0f172a'
                           }}
@@ -338,7 +407,7 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
               type="target"
               position={Position.Left}
               id={`${id}-${input.id}`}
-              style={{ 
+              style={{
                 top: isCollapsed ? '50%' : `${45 + index * 24}px`,
                 transform: isCollapsed ? 'translateY(-50%)' : 'none',
                 background: isDark ? '#1f1b2e' : '#ffffff',
@@ -381,7 +450,7 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
               type="source"
               position={Position.Right}
               id={`${id}-${output.id}`}
-              style={{ 
+              style={{
                 top: isCollapsed ? '50%' : `${45 + index * 24}px`,
                 transform: isCollapsed ? 'translateY(-50%)' : 'none',
                 background: isDark ? '#1f1b2e' : '#ffffff',
@@ -445,11 +514,11 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
             left: '0',
             marginTop: '8px',
             width: Math.max(nodeWidth, 280),
-            background: isDark ? 'rgba(31, 27, 46, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+            background: isDark ? 'rgba(31, 27, 46, 0.98)' : 'rgba(255, 255, 255, 0.98)',
             border: `1px solid ${isDark ? '#2d1b69' : '#e2e8f0'}`,
             borderRadius: '12px',
             padding: '16px',
-            boxShadow: isDark 
+            boxShadow: isDark
               ? '0 8px 32px rgba(105, 19, 224, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1)'
               : '0 8px 32px rgba(59, 130, 246, 0.1), 0 4px 16px rgba(0, 0, 0, 0.1)',
             backdropFilter: 'blur(20px)',
@@ -511,7 +580,7 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
                 }}>
                   {field.label}
                 </label>
-                
+
                 {field.type === 'text' || field.type === 'textarea' ? (
                   <textarea
                     value={tempNodeData[field.name] !== undefined ? tempNodeData[field.name] : (nodeData[field.name] || field.default || '')}
@@ -568,10 +637,10 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
                     }}
                   >
                     {field.options?.map((option, optIndex) => (
-                      <option 
-                        key={optIndex} 
+                      <option
+                        key={optIndex}
                         value={option.value}
-                        style={{ 
+                        style={{
                           background: isDark ? '#141322' : '#ffffff',
                           color: isDark ? '#f4f3ff' : '#0f172a'
                         }}
@@ -622,7 +691,7 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
                 padding: '8px 12px',
                 border: 'none',
                 borderRadius: '6px',
-                background: isDark 
+                background: isDark
                   ? 'linear-gradient(135deg, #6913e0, #7c3aed)'
                   : 'linear-gradient(135deg, #3b82f6, #2563eb)',
                 color: 'white',
@@ -636,7 +705,7 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
               }}
               onMouseEnter={(e) => {
                 e.target.style.transform = 'translateY(-1px)';
-                e.target.style.boxShadow = isDark 
+                e.target.style.boxShadow = isDark
                   ? '0 4px 12px rgba(105, 19, 224, 0.3)'
                   : '0 4px 12px rgba(59, 130, 246, 0.3)';
               }}
@@ -665,7 +734,7 @@ export const BaseNode = ({ id, data, nodeConfig, onDataChange }) => {
             border: `1px solid ${isDark ? '#2d1b69' : '#e2e8f0'}`,
             borderRadius: '16px',
             padding: '24px',
-            boxShadow: isDark 
+            boxShadow: isDark
               ? '0 20px 60px rgba(105, 19, 224, 0.3), 0 8px 24px rgba(0, 0, 0, 0.2)'
               : '0 20px 60px rgba(59, 130, 246, 0.2), 0 8px 24px rgba(0, 0, 0, 0.1)',
             backdropFilter: 'blur(20px)',

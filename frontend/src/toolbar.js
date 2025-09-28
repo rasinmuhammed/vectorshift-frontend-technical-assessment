@@ -1,4 +1,3 @@
-// Fixed Responsive Toolbar Component - Premium VectorShift Style
 import React, { useState, useEffect, useRef } from 'react';
 import { DraggableNode } from './draggableNode';
 import { useTheme } from './App';
@@ -136,14 +135,13 @@ export const PipelineToolbar = () => {
     flexDirection: 'column',
     backdropFilter: 'blur(20px)',
     position: 'relative',
-    zIndex: 998, // Ensure it's below header but above canvas
+    zIndex: 998, 
     overflow: 'visible',
     background: isDark 
       ? 'rgba(20, 19, 34, 0.95)'
       : 'rgba(255, 255, 255, 0.95)',
   });
 
-  // Enhanced content styling for proper layering
   const getContentStyle = () => {
     const baseStyle = {
       paddingBottom: isMobile ? '8px' : '12px',
@@ -232,7 +230,7 @@ export const PipelineToolbar = () => {
 
   return (
     <div style={getContainerStyle()}>
-      {/* Enhanced Tabs Section with Scroll Controls */}
+
       <div style={{ 
         position: 'relative',
         display: 'flex',

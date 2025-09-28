@@ -1,4 +1,3 @@
-// Enhanced Responsive Validation Modal
 import React, { useEffect } from 'react';
 import { FiX, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi';
 

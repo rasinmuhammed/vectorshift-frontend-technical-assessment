@@ -217,7 +217,6 @@ const PipelineFlow = () => {
     }
   }, [handleTouchDrop]);
 
-  // Enhanced connection line style with proper illumination
   const connectionLineStyle = {
     stroke: isDark ? '#a78bfa' : '#60a5fa',
     strokeWidth: 3,
@@ -228,7 +227,6 @@ const PipelineFlow = () => {
     animation: 'dashFlow 1.5s linear infinite',
   };
 
-  // Enhanced default edge options with better styling
   const defaultEdgeOptions = {
     type: 'smoothstep',
     style: {
@@ -248,7 +246,6 @@ const PipelineFlow = () => {
     animated: true, // Enable built-in animation
   };
 
-  // Enhanced edge styles with proper theme colors
   const edgeTypes = {
     default: {
       ...defaultEdgeOptions,

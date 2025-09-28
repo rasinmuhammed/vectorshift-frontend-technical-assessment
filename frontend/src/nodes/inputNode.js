@@ -1,8 +1,6 @@
-// frontend/src/nodes/inputNode.js - Enhanced version
 import { BaseNode } from './BaseNode.js';
 import { useStore } from '../store';
 
-// Input Node with enhanced features
 export const InputNode = ({ id, data }) => {
   const updateNodeField = useStore((state) => state.updateNodeField);
 
@@ -11,7 +9,7 @@ export const InputNode = ({ id, data }) => {
     title: 'Input',
     description: 'Data input source',
     width: 200,
-    height: 140, // Slightly increased height to accommodate more fields
+    height: 140, 
     fields: [
       {
         name: 'inputName',
@@ -52,7 +50,7 @@ export const InputNode = ({ id, data }) => {
         ]
       }
     ],
-    inputs: [], // Input nodes typically don't have inputs
+    inputs: [], 
     outputs: [
       { id: 'value', label: 'Value' },
       { id: 'metadata', label: 'Metadata' }
