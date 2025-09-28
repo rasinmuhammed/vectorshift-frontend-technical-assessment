@@ -1,8 +1,10 @@
-// Enhanced Submit Component - Premium Pipeline Validator
+// Enhanced Submit Component with Modal Integration
+import React, { useState } from 'react';
 import { useStore } from './store';
 import { useTheme } from './App';
 import { shallow } from 'zustand/shallow';
 import { FiPlay, FiCheck, FiAlertCircle, FiActivity } from 'react-icons/fi';
+import ValidationModal from './validationModal';
 
 const selector = (state) => ({
   nodes: state.nodes,
@@ -12,8 +14,15 @@ const selector = (state) => ({
 export const SubmitButton = () => {
   const { nodes, edges } = useStore(selector, shallow);
   const { isDark } = useTheme();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [validationResult, setValidationResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
+    setIsModalOpen(true);
+    setIsLoading(true);
+    setValidationResult(null);
+
     try {
       // Prepare the pipeline data
       const pipelineData = {
@@ -35,22 +44,25 @@ export const SubmitButton = () => {
       }
 
       const result = await response.json();
-      
-      // Create sophisticated alert with custom modal-like appearance
-      const alertMessage = `Pipeline Analysis Complete\n\n` +
-        `📊 Nodes: ${result.num_nodes}\n` +
-        `🔗 Edges: ${result.num_edges}\n` +
-        `${result.is_dag ? '✅' : '❌'} Valid DAG: ${result.is_dag ? 'Yes' : 'No'}\n\n` +
-        `${result.is_dag 
-          ? '✨ Pipeline structure validated. Ready for execution.' 
-          : '⚠️ Warning: Circular dependencies detected. Pipeline cannot execute.'}`;
-      
-      alert(alertMessage);
+      setValidationResult(result);
       
     } catch (error) {
       console.error('Error submitting pipeline:', error);
-      alert(`❌ Pipeline submission failed: ${error.message}`);
+      setValidationResult({
+        num_nodes: nodes.length,
+        num_edges: edges.length,
+        is_dag: false,
+        error: error.message
+      });
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setValidationResult(null);
+    setIsLoading(false);
   };
 
   const isDisabled = nodes.length === 0;
@@ -65,7 +77,7 @@ export const SubmitButton = () => {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '20px 32px',
-    height: '50px',
+    height: '6  0px',
     background: isDark 
       ? `linear-gradient(180deg, 
           rgba(10, 10, 15, 0.95) 0%, 
@@ -146,178 +158,188 @@ export const SubmitButton = () => {
   };
 
   return (
-    <div style={containerStyle}>
-      {/* Subtle top border glow */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '1px',
-        background: `linear-gradient(90deg, transparent, ${
-          isDark ? 'rgba(105, 19, 224, 0.4)' : 'rgba(59, 130, 246, 0.3)'
-        }, transparent)`
-      }} />
-
-      {/* Pipeline Statistics */}
-      <div style={statsStyle}>
-        <div style={statItemStyle}>
-          <div style={{
-            width: '10px',
-            height: '10px',
-            borderRadius: '50%',
-            background: nodes.length > 0 
-              ? (isDark ? '#6913e0' : '#3b82f6')
-              : (isDark ? 'rgba(167, 139, 250, 0.4)' : 'rgba(100, 116, 139, 0.4)'),
-            boxShadow: nodes.length > 0 
-              ? `0 0 8px ${isDark ? '#6913e0' : '#3b82f6'}` 
-              : 'none',
-            transition: 'all 0.3s ease',
-          }} />
-          <FiActivity size={14} />
-          <span>{nodes.length} Component{nodes.length !== 1 ? 's' : ''}</span>
-        </div>
-        
-        <div style={statItemStyle}>
-          <div style={{
-            width: '10px',
-            height: '10px',
-            borderRadius: '50%',
-            background: hasConnections 
-              ? (isDark ? '#6913e0' : '#3b82f6')
-              : (isDark ? 'rgba(167, 139, 250, 0.4)' : 'rgba(100, 116, 139, 0.4)'),
-            boxShadow: hasConnections 
-              ? `0 0 8px ${isDark ? '#6913e0' : '#3b82f6'}` 
-              : 'none',
-            transition: 'all 0.3s ease',
-          }} />
-          <FiCheck size={14} />
-          <span>{edges.length} Connection{edges.length !== 1 ? 's' : ''}</span>
-        </div>
-
-        {/* Pipeline Status Indicator */}
+    <>
+      <div style={containerStyle}>
+        {/* Subtle top border glow */}
         <div style={{
-          ...statItemStyle,
-          background: (nodes.length > 0 && hasConnections) 
-            ? (isDark 
-                ? 'rgba(16, 185, 129, 0.15)' 
-                : 'rgba(16, 185, 129, 0.1)'
-              )
-            : statItemStyle.background,
-          borderColor: (nodes.length > 0 && hasConnections)
-            ? (isDark 
-                ? 'rgba(16, 185, 129, 0.3)' 
-                : 'rgba(16, 185, 129, 0.2)'
-              )
-            : (isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'),
-          color: (nodes.length > 0 && hasConnections)
-            ? (isDark ? '#34d399' : '#059669')
-            : (isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)'),
-        }}>
-          {(nodes.length > 0 && hasConnections) ? (
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '1px',
+          background: `linear-gradient(90deg, transparent, ${
+            isDark ? 'rgba(105, 19, 224, 0.4)' : 'rgba(59, 130, 246, 0.3)'
+          }, transparent)`
+        }} />
+
+        {/* Pipeline Statistics */}
+        <div style={statsStyle}>
+          <div style={statItemStyle}>
+            <div style={{
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              background: nodes.length > 0 
+                ? (isDark ? '#6913e0' : '#3b82f6')
+                : (isDark ? 'rgba(167, 139, 250, 0.4)' : 'rgba(100, 116, 139, 0.4)'),
+              boxShadow: nodes.length > 0 
+                ? `0 0 8px ${isDark ? '#6913e0' : '#3b82f6'}` 
+                : 'none',
+              transition: 'all 0.3s ease',
+            }} />
+            <FiActivity size={14} />
+            <span>{nodes.length} Component{nodes.length !== 1 ? 's' : ''}</span>
+          </div>
+          
+          <div style={statItemStyle}>
+            <div style={{
+              width: '10px',
+              height: '10px',
+              borderRadius: '50%',
+              background: hasConnections 
+                ? (isDark ? '#6913e0' : '#3b82f6')
+                : (isDark ? 'rgba(167, 139, 250, 0.4)' : 'rgba(100, 116, 139, 0.4)'),
+              boxShadow: hasConnections 
+                ? `0 0 8px ${isDark ? '#6913e0' : '#3b82f6'}` 
+                : 'none',
+              transition: 'all 0.3s ease',
+            }} />
+            <FiCheck size={14} />
+            <span>{edges.length} Connection{edges.length !== 1 ? 's' : ''}</span>
+          </div>
+
+          {/* Pipeline Status Indicator */}
+          <div style={{
+            ...statItemStyle,
+            background: (nodes.length > 0 && hasConnections) 
+              ? (isDark 
+                  ? 'rgba(16, 185, 129, 0.15)' 
+                  : 'rgba(16, 185, 129, 0.1)'
+                )
+              : statItemStyle.background,
+            borderColor: (nodes.length > 0 && hasConnections)
+              ? (isDark 
+                  ? 'rgba(16, 185, 129, 0.3)' 
+                  : 'rgba(16, 185, 129, 0.2)'
+                )
+              : (isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'),
+            color: (nodes.length > 0 && hasConnections)
+              ? (isDark ? '#34d399' : '#059669')
+              : (isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)'),
+          }}>
+            {(nodes.length > 0 && hasConnections) ? (
+              <>
+                <FiCheck size={14} />
+                <span>Pipeline Ready</span>
+              </>
+            ) : (
+              <>
+                <FiAlertCircle size={14} />
+                <span>In Progress</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Enhanced Submit Button */}
+        <button 
+          type="submit"
+          onClick={handleSubmit}
+          disabled={isDisabled}
+          style={buttonStyle}
+          onMouseEnter={(e) => {
+            if (!isDisabled) {
+              e.target.style.transform = 'translateY(-2px) scale(1.02)';
+              e.target.style.boxShadow = isDark
+                ? `0 8px 30px rgba(105, 19, 224, 0.4), 
+                   0 4px 8px rgba(105, 19, 224, 0.5),
+                   inset 0 1px 0 rgba(255, 255, 255, 0.15)`
+                : `0 8px 30px rgba(59, 130, 246, 0.35),
+                   0 4px 8px rgba(59, 130, 246, 0.4),
+                   inset 0 1px 0 rgba(255, 255, 255, 0.25)`;
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isDisabled) {
+              e.target.style.transform = 'translateY(0) scale(1)';
+              e.target.style.boxShadow = isDark
+                ? `0 4px 20px rgba(105, 19, 224, 0.3), 
+                   0 1px 3px rgba(105, 19, 224, 0.4),
+                   inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+                : `0 4px 20px rgba(59, 130, 246, 0.25),
+                   0 1px 3px rgba(59, 130, 246, 0.3),
+                   inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
+            }
+          }}
+          onMouseDown={(e) => {
+            if (!isDisabled) {
+              e.target.style.transform = 'translateY(-1px) scale(0.98)';
+            }
+          }}
+          onMouseUp={(e) => {
+            if (!isDisabled) {
+              e.target.style.transform = 'translateY(-2px) scale(1.02)';
+            }
+          }}
+        >
+          {/* Button Icon and Text */}
+          {isDisabled ? (
             <>
-              <FiCheck size={14} />
-              <span>Pipeline Ready</span>
+              <FiAlertCircle size={16} style={{ opacity: 0.7 }} />
+              <span>Add Components to Validate</span>
             </>
           ) : (
             <>
-              <FiAlertCircle size={14} />
-              <span>In Progress</span>
+              <FiPlay size={16} />
+              <span>Validate Pipeline</span>
             </>
           )}
-        </div>
+          
+          {/* Premium Button Highlight Effect */}
+          {!isDisabled && (
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '1px',
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
+              borderRadius: '10px 10px 0 0'
+            }} />
+          )}
+
+          {/* Animated Gradient Overlay for Premium Feel */}
+          {!isDisabled && (
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: '-100%',
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent)',
+              animation: 'shimmer 3s infinite',
+              borderRadius: '10px',
+            }} />
+          )}
+        </button>
+
+        {/* Custom CSS Animation for shimmer effect */}
+        <style jsx>{`
+          @keyframes shimmer {
+            0% { left: -100%; }
+            50% { left: -100%; }
+            100% { left: 100%; }
+          }
+        `}</style>
       </div>
 
-      {/* Enhanced Submit Button */}
-      <button 
-        type="submit"
-        onClick={handleSubmit}
-        disabled={isDisabled}
-        style={buttonStyle}
-        onMouseEnter={(e) => {
-          if (!isDisabled) {
-            e.target.style.transform = 'translateY(-2px) scale(1.02)';
-            e.target.style.boxShadow = isDark
-              ? `0 8px 30px rgba(105, 19, 224, 0.4), 
-                 0 4px 8px rgba(105, 19, 224, 0.5),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.15)`
-              : `0 8px 30px rgba(59, 130, 246, 0.35),
-                 0 4px 8px rgba(59, 130, 246, 0.4),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.25)`;
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!isDisabled) {
-            e.target.style.transform = 'translateY(0) scale(1)';
-            e.target.style.boxShadow = isDark
-              ? `0 4px 20px rgba(105, 19, 224, 0.3), 
-                 0 1px 3px rgba(105, 19, 224, 0.4),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.1)`
-              : `0 4px 20px rgba(59, 130, 246, 0.25),
-                 0 1px 3px rgba(59, 130, 246, 0.3),
-                 inset 0 1px 0 rgba(255, 255, 255, 0.2)`;
-          }
-        }}
-        onMouseDown={(e) => {
-          if (!isDisabled) {
-            e.target.style.transform = 'translateY(-1px) scale(0.98)';
-          }
-        }}
-        onMouseUp={(e) => {
-          if (!isDisabled) {
-            e.target.style.transform = 'translateY(-2px) scale(1.02)';
-          }
-        }}
-      >
-        {/* Button Icon and Text */}
-        {isDisabled ? (
-          <>
-            <FiAlertCircle size={16} style={{ opacity: 0.7 }} />
-            <span>Add Components to Validate</span>
-          </>
-        ) : (
-          <>
-            <FiPlay size={16} />
-            <span>Validate Pipeline</span>
-          </>
-        )}
-        
-        {/* Premium Button Highlight Effect */}
-        {!isDisabled && (
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
-            borderRadius: '10px 10px 0 0'
-          }} />
-        )}
-
-        {/* Animated Gradient Overlay for Premium Feel */}
-        {!isDisabled && (
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: '-100%',
-            width: '100%',
-            height: '100%',
-            background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent)',
-            animation: 'shimmer 3s infinite',
-            borderRadius: '10px',
-          }} />
-        )}
-      </button>
-
-      {/* Custom CSS Animation for shimmer effect */}
-      <style jsx>{`
-        @keyframes shimmer {
-          0% { left: -100%; }
-          50% { left: -100%; }
-          100% { left: 100%; }
-        }
-      `}</style>
-    </div>
+      {/* Validation Modal */}
+      <ValidationModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        validationResult={validationResult}
+        isLoading={isLoading}
+      />
+    </>
   );
 };
