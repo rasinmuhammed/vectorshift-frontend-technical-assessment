@@ -65,7 +65,7 @@ export const SubmitButton = () => {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '20px 32px',
-    height: '80px',
+    height: '50px',
     background: isDark 
       ? `linear-gradient(180deg, 
           rgba(10, 10, 15, 0.95) 0%, 
