@@ -1,5 +1,5 @@
-// Enhanced Toolbar Component - Premium VectorShift Style
-import { useState } from 'react';
+// Enhanced Responsive Toolbar Component - Premium VectorShift Style
+import React, { useState, useEffect, useRef } from 'react';
 import { DraggableNode } from './draggableNode';
 import { useTheme } from './App';
 import { 
@@ -10,13 +10,65 @@ import {
   FiGitBranch, 
   FiDatabase,
   FiMessageSquare,
-  FiBook
+  FiBook,
+  FiChevronLeft,
+  FiChevronRight,
+  FiGrid,
+  FiList
 } from 'react-icons/fi';
 import { Brain } from 'lucide-react';
 
 export const PipelineToolbar = () => {
   const [activeTab, setActiveTab] = useState('Objects');
-  const { isDark } = useTheme();
+  const { isDark, isMobile, isTablet, screenSize } = useTheme();
+  const [showScrollButtons, setShowScrollButtons] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const tabsRef = useRef(null);
+  const contentRef = useRef(null);
+
+  // Check scroll state
+  const checkScrollState = () => {
+    if (tabsRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+      setShowScrollButtons(scrollWidth > clientWidth);
+    }
+  };
+
+  useEffect(() => {
+    checkScrollState();
+    const handleResize = () => checkScrollState();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [activeTab]);
+
+  // Scroll functions
+  const scrollLeft = () => {
+    if (tabsRef.current) {
+      tabsRef.current.scrollBy({ left: -120, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (tabsRef.current) {
+      tabsRef.current.scrollBy({ left: 120, behavior: 'smooth' });
+    }
+  };
+
+  const scrollContentLeft = () => {
+    if (contentRef.current) {
+      contentRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+  };
+
+  const scrollContentRight = () => {
+    if (contentRef.current) {
+      contentRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+  };
 
   const tabs = [
     { id: 'Start', label: 'Start', icon: FiPlay },
@@ -73,12 +125,13 @@ export const PipelineToolbar = () => {
     }
   };
 
-  const tabStyle = (isActive) => ({
+  // Responsive tab styling
+  const getTabStyle = (isActive) => ({
     display: 'flex',
     alignItems: 'center',
-    gap: '6px',
-    paddingBottom: '10px',
-    fontSize: '13px',
+    gap: isMobile ? '4px' : '6px',
+    paddingBottom: isMobile ? '8px' : '10px',
+    fontSize: isMobile ? '11px' : (isTablet ? '12px' : '13px'),
     fontWeight: '500',
     cursor: 'pointer',
     background: 'none',
@@ -93,42 +146,95 @@ export const PipelineToolbar = () => {
       : 'transparent',
     position: 'relative',
     whiteSpace: 'nowrap',
+    flexShrink: 0,
+    padding: isMobile ? '0 8px' : '0 4px',
+    minWidth: isMobile ? '60px' : 'auto',
+    textAlign: 'center',
   });
 
-  const startContentStyle = {
+  // Responsive container styling
+  const getContainerStyle = () => ({
+    padding: isMobile ? '0 12px' : (isTablet ? '0 20px' : '0 24px'),
+    borderBottom: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+    transition: 'all 0.3s ease',
+    height: isMobile ? '85px' : (isTablet ? '100px' : '110px'),
+    flexShrink: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    backdropFilter: 'blur(20px)',
+    position: 'relative',
+    zIndex: 999,
+    overflow: 'hidden',
+    background: isDark 
+      ? 'rgba(20, 19, 34, 0.85)'
+      : 'rgba(255, 255, 255, 0.85)',
+  });
+
+  // Responsive content styling
+  const getContentStyle = () => {
+    if (isMobile && viewMode === 'list') {
+      return {
+        paddingBottom: '8px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px',
+        flex: 1,
+        overflowY: 'auto',
+        maxHeight: '50px',
+      };
+    }
+    
+    return {
+      paddingBottom: isMobile ? '8px' : '12px',
+      display: 'flex',
+      gap: isMobile ? '6px' : '8px',
+      overflowX: 'auto',
+      overflowY: 'hidden',
+      flex: 1,
+      alignItems: 'flex-start',
+      scrollbarWidth: 'thin',
+      position: 'relative',
+    };
+  };
+
+  // Start content responsive styling
+  const getStartContentStyle = () => ({
     display: 'flex', 
-    gap: '12px',
+    gap: isMobile ? '8px' : '12px',
     maxHeight: 'none',
     padding: '0',
     alignItems: 'flex-start',
-  };
+    flexDirection: isMobile ? 'column' : 'row',
+    overflowY: isMobile ? 'auto' : 'visible',
+    flex: 1,
+  });
 
-  const welcomeCardStyle = {
+  const getWelcomeCardStyle = () => ({
     background: isDark 
       ? 'linear-gradient(135deg, rgba(105, 19, 224, 0.12) 0%, rgba(124, 58, 237, 0.08) 100%)'
       : 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.04) 100%)',
-    padding: '16px', 
-    borderRadius: '10px',
+    padding: isMobile ? '12px' : (isTablet ? '14px' : '16px'),
+    borderRadius: isMobile ? '8px' : '10px',
     border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.25)' : 'rgba(59, 130, 246, 0.15)'}`,
     backdropFilter: 'blur(10px)',
     position: 'relative',
     overflow: 'hidden',
-    flex: '1',
-    minWidth: '200px',
-  };
+    flex: isMobile ? 'none' : '1',
+    minWidth: isMobile ? '100%' : '200px',
+  });
 
-  const featureCardStyle = {
+  const getFeatureCardStyle = () => ({
     background: isDark 
       ? 'rgba(31, 27, 46, 0.6)'
       : 'rgba(255, 255, 255, 0.8)',
-    padding: '12px', 
-    borderRadius: '8px',
+    padding: isMobile ? '8px' : '12px',
+    borderRadius: isMobile ? '6px' : '8px',
     border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.18)' : 'rgba(59, 130, 246, 0.12)'}`,
     backdropFilter: 'blur(10px)',
     transition: 'all 0.2s ease',
-    minWidth: '160px',
+    minWidth: isMobile ? '100%' : (isTablet ? '140px' : '160px'),
     flexShrink: 0,
-  };
+  });
 
   const features = [
     {
@@ -149,57 +255,252 @@ export const PipelineToolbar = () => {
   ];
 
   return (
-    <div className="toolbar-container">
-      <div className="toolbar-tabs">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              style={tabStyle(isActive)}
-              onClick={() => setActiveTab(tab.id)}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.target.style.color = isDark ? '#a78bfa' : '#60a5fa';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.target.style.color = isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)';
-                }
-              }}
-            >
-              <Icon size={14} />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
+    <div style={getContainerStyle()}>
+      {/* Enhanced Tabs Section with Scroll Controls */}
+      <div style={{ 
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: isMobile ? '8px' : '12px',
+        paddingTop: isMobile ? '8px' : '12px',
+      }}>
+        {/* Left Scroll Button */}
+        {showScrollButtons && canScrollLeft && (
+          <button
+            onClick={scrollLeft}
+            style={{
+              position: 'absolute',
+              left: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              zIndex: 10,
+              background: isDark 
+                ? 'linear-gradient(90deg, rgba(20, 19, 34, 0.9) 0%, transparent 100%)'
+                : 'linear-gradient(90deg, rgba(255, 255, 255, 0.9) 0%, transparent 100%)',
+              border: 'none',
+              padding: '4px 8px 4px 4px',
+              cursor: 'pointer',
+              color: isDark ? '#6913e0' : '#3b82f6',
+              borderRadius: '4px',
+            }}
+          >
+            <FiChevronLeft size={16} />
+          </button>
+        )}
+
+        {/* Tabs Container */}
+        <div 
+          ref={tabsRef}
+          style={{
+            display: 'flex',
+            gap: isMobile ? '12px' : '20px',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            flex: 1,
+            paddingLeft: showScrollButtons && canScrollLeft ? '20px' : '0',
+            paddingRight: showScrollButtons && canScrollRight ? '20px' : '0',
+          }}
+          onScroll={checkScrollState}
+        >
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                style={getTabStyle(isActive)}
+                onClick={() => setActiveTab(tab.id)}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.target.style.color = isDark ? '#a78bfa' : '#60a5fa';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.target.style.color = isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)';
+                  }
+                }}
+              >
+                <Icon size={isMobile ? 12 : 14} />
+                {(!isMobile || screenSize.width > 400) && <span>{tab.label}</span>}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right Scroll Button */}
+        {showScrollButtons && canScrollRight && (
+          <button
+            onClick={scrollRight}
+            style={{
+              position: 'absolute',
+              right: '-8px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              zIndex: 10,
+              background: isDark 
+                ? 'linear-gradient(270deg, rgba(20, 19, 34, 0.9) 0%, transparent 100%)'
+                : 'linear-gradient(270deg, rgba(255, 255, 255, 0.9) 0%, transparent 100%)',
+              border: 'none',
+              padding: '4px 4px 4px 8px',
+              cursor: 'pointer',
+              color: isDark ? '#6913e0' : '#3b82f6',
+              borderRadius: '4px',
+            }}
+          >
+            <FiChevronRight size={16} />
+          </button>
+        )}
       </div>
 
-      {getNodesForTab(activeTab).length > 0 && (
-        <div className="toolbar-content">
-          {getNodesForTab(activeTab).map((node, index) => (
-            <DraggableNode 
-              key={`${node.type}-${index}`}
-              type={node.type}
-              label={node.label}
-              description={node.description}
-            />
-          ))}
+      {/* Mobile View Mode Toggle */}
+      {isMobile && activeTab !== 'Start' && getNodesForTab(activeTab).length > 0 && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '8px',
+          padding: '0 4px',
+        }}>
+          <span style={{
+            fontSize: '10px',
+            color: isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)',
+            fontWeight: '500',
+          }}>
+            View:
+          </span>
+          <div style={{
+            display: 'flex',
+            background: isDark ? 'rgba(31, 27, 46, 0.6)' : 'rgba(248, 250, 252, 0.6)',
+            borderRadius: '4px',
+            padding: '2px',
+            border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+          }}>
+            <button
+              onClick={() => setViewMode('grid')}
+              style={{
+                background: viewMode === 'grid' 
+                  ? (isDark ? '#6913e0' : '#3b82f6')
+                  : 'transparent',
+                border: 'none',
+                padding: '4px',
+                borderRadius: '2px',
+                cursor: 'pointer',
+                color: viewMode === 'grid' 
+                  ? 'white'
+                  : (isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)'),
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <FiGrid size={12} />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              style={{
+                background: viewMode === 'list' 
+                  ? (isDark ? '#6913e0' : '#3b82f6')
+                  : 'transparent',
+                border: 'none',
+                padding: '4px',
+                borderRadius: '2px',
+                cursor: 'pointer',
+                color: viewMode === 'list' 
+                  ? 'white'
+                  : (isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)'),
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <FiList size={12} />
+            </button>
+          </div>
         </div>
       )}
 
+      {/* Content Section with Enhanced Scroll Controls */}
+      {getNodesForTab(activeTab).length > 0 && (
+        <div style={{ position: 'relative', flex: 1 }}>
+          {/* Content scroll buttons for desktop/tablet */}
+          {!isMobile && (
+            <>
+              <button
+                onClick={scrollContentLeft}
+                style={{
+                  position: 'absolute',
+                  left: '-8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  zIndex: 10,
+                  background: isDark 
+                    ? 'linear-gradient(90deg, rgba(20, 19, 34, 0.8) 0%, transparent 100%)'
+                    : 'linear-gradient(90deg, rgba(255, 255, 255, 0.8) 0%, transparent 100%)',
+                  border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+                  borderRadius: '6px',
+                  padding: '6px 8px 6px 4px',
+                  cursor: 'pointer',
+                  color: isDark ? '#6913e0' : '#3b82f6',
+                  opacity: 0.7,
+                  transition: 'opacity 0.2s ease',
+                }}
+                onMouseEnter={(e) => e.target.style.opacity = '1'}
+                onMouseLeave={(e) => e.target.style.opacity = '0.7'}
+              >
+                <FiChevronLeft size={14} />
+              </button>
+              <button
+                onClick={scrollContentRight}
+                style={{
+                  position: 'absolute',
+                  right: '-8px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  zIndex: 10,
+                  background: isDark 
+                    ? 'linear-gradient(270deg, rgba(20, 19, 34, 0.8) 0%, transparent 100%)'
+                    : 'linear-gradient(270deg, rgba(255, 255, 255, 0.8) 0%, transparent 100%)',
+                  border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+                  borderRadius: '6px',
+                  padding: '6px 4px 6px 8px',
+                  cursor: 'pointer',
+                  color: isDark ? '#6913e0' : '#3b82f6',
+                  opacity: 0.7,
+                  transition: 'opacity 0.2s ease',
+                }}
+                onMouseEnter={(e) => e.target.style.opacity = '1'}
+                onMouseLeave={(e) => e.target.style.opacity = '0.7'}
+              >
+                <FiChevronRight size={14} />
+              </button>
+            </>
+          )}
+
+          <div 
+            ref={contentRef}
+            style={getContentStyle()}
+          >
+            {getNodesForTab(activeTab).map((node, index) => (
+              <DraggableNode 
+                key={`${node.type}-${index}`}
+                type={node.type}
+                label={node.label}
+                description={node.description}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced Start Content */}
       {activeTab === 'Start' && (
-        <div className="toolbar-content" style={startContentStyle}>
+        <div style={getStartContentStyle()}>
           {/* Welcome Card */}
-          <div style={welcomeCardStyle}>
+          <div style={getWelcomeCardStyle()}>
             <div style={{
               position: 'absolute',
               top: 0,
               right: 0,
-              width: '60px',
-              height: '60px',
+              width: isMobile ? '40px' : '60px',
+              height: isMobile ? '40px' : '60px',
               background: `radial-gradient(circle, ${
                 isDark ? 'rgba(105, 19, 224, 0.15)' : 'rgba(59, 130, 246, 0.08)'
               } 0%, transparent 70%)`,
@@ -209,12 +510,12 @@ export const PipelineToolbar = () => {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '10px',
-              marginBottom: '10px',
+              gap: isMobile ? '8px' : '10px',
+              marginBottom: isMobile ? '8px' : '10px',
             }}>
               <div style={{
-                width: '32px',
-                height: '32px',
+                width: isMobile ? '28px' : '32px',
+                height: isMobile ? '28px' : '32px',
                 borderRadius: '6px',
                 background: `linear-gradient(135deg, ${isDark ? '#6913e0' : '#3b82f6'}, ${isDark ? '#7c3aed' : '#2563eb'})`,
                 display: 'flex',
@@ -222,12 +523,12 @@ export const PipelineToolbar = () => {
                 justifyContent: 'center',
                 color: 'white',
               }}>
-                <FiPlay size={16} />
+                <FiPlay size={isMobile ? 12 : 16} />
               </div>
               <div>
                 <h3 style={{ 
                   margin: 0, 
-                  fontSize: '14px', 
+                  fontSize: isMobile ? '12px' : '14px',
                   fontWeight: '600',
                   color: isDark ? '#f4f3ff' : '#0f172a',
                 }}>
@@ -235,7 +536,7 @@ export const PipelineToolbar = () => {
                 </h3>
                 <p style={{ 
                   margin: '2px 0 0 0', 
-                  fontSize: '11px', 
+                  fontSize: isMobile ? '9px' : '11px',
                   opacity: 0.8,
                   color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
                 }}>
@@ -246,7 +547,7 @@ export const PipelineToolbar = () => {
             
             <p style={{ 
               margin: 0, 
-              fontSize: '12px', 
+              fontSize: isMobile ? '10px' : '12px',
               lineHeight: '1.4',
               color: isDark ? 'rgba(244, 243, 255, 0.9)' : 'rgba(15, 23, 42, 0.8)',
             }}>
@@ -255,36 +556,47 @@ export const PipelineToolbar = () => {
           </div>
 
           {/* Feature Cards */}
-          <div className="feature-cards">
+          <div style={{
+            display: 'flex',
+            gap: isMobile ? '6px' : '8px',
+            overflowX: isMobile ? 'visible' : 'auto',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            flexDirection: isMobile ? 'column' : 'row',
+            flex: isMobile ? 'none' : '1',
+          }}>
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <div 
                   key={index} 
-                  className="feature-card"
-                  style={featureCardStyle}
+                  style={getFeatureCardStyle()}
                   onMouseEnter={(e) => {
-                    e.target.style.transform = 'translateY(-1px)';
-                    e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.35)' : 'rgba(59, 130, 246, 0.25)';
-                    e.target.style.boxShadow = isDark 
-                      ? '0 4px 12px rgba(105, 19, 224, 0.12)'
-                      : '0 4px 12px rgba(0, 0, 0, 0.08)';
+                    if (!isMobile) {
+                      e.target.style.transform = 'translateY(-1px)';
+                      e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.35)' : 'rgba(59, 130, 246, 0.25)';
+                      e.target.style.boxShadow = isDark 
+                        ? '0 4px 12px rgba(105, 19, 224, 0.12)'
+                        : '0 4px 12px rgba(0, 0, 0, 0.08)';
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.18)' : 'rgba(59, 130, 246, 0.12)';
-                    e.target.style.boxShadow = 'none';
+                    if (!isMobile) {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.18)' : 'rgba(59, 130, 246, 0.12)';
+                      e.target.style.boxShadow = 'none';
+                    }
                   }}
                 >
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px',
-                    marginBottom: '6px',
+                    gap: isMobile ? '4px' : '6px',
+                    marginBottom: isMobile ? '4px' : '6px',
                   }}>
                     <div style={{
-                      width: '20px',
-                      height: '20px',
+                      width: isMobile ? '16px' : '20px',
+                      height: isMobile ? '16px' : '20px',
                       borderRadius: '4px',
                       background: `linear-gradient(135deg, ${isDark ? '#6913e0' : '#3b82f6'}, ${isDark ? '#7c3aed' : '#2563eb'})`,
                       display: 'flex',
@@ -292,11 +604,11 @@ export const PipelineToolbar = () => {
                       justifyContent: 'center',
                       color: 'white',
                     }}>
-                      <Icon size={10} />
+                      <Icon size={isMobile ? 8 : 10} />
                     </div>
                     <h4 style={{ 
                       margin: 0, 
-                      fontSize: '12px', 
+                      fontSize: isMobile ? '10px' : '12px',
                       fontWeight: '500',
                       color: isDark ? '#f4f3ff' : '#0f172a',
                     }}>
@@ -305,7 +617,7 @@ export const PipelineToolbar = () => {
                   </div>
                   <p style={{ 
                     margin: 0, 
-                    fontSize: '10px', 
+                    fontSize: isMobile ? '8px' : '10px',
                     lineHeight: '1.3',
                     color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
                   }}>

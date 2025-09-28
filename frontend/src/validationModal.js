@@ -1,13 +1,38 @@
-// Validation Modal Component
-import React from 'react';
-import { useTheme } from './App';
-import { FiX, FiCheck, FiAlertCircle, FiActivity, FiZap } from 'react-icons/fi';
+// Enhanced Responsive Validation Modal
+import React, { useEffect } from 'react';
+import { FiX, FiCheck, FiAlertCircle, FiActivity, FiLoader } from 'react-icons/fi';
 
-export const ValidationModal = ({ isOpen, onClose, validationResult, isLoading }) => {
-  const { isDark } = useTheme();
+const ValidationModal = ({ 
+  isOpen, 
+  onClose, 
+  validationResult, 
+  isLoading, 
+  isMobile = false, 
+  isDark = false 
+}) => {
+  // Close modal on escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
+  // Responsive overlay styles
   const overlayStyle = {
     position: 'fixed',
     top: 0,
@@ -17,391 +42,434 @@ export const ValidationModal = ({ isOpen, onClose, validationResult, isLoading }
     background: 'rgba(0, 0, 0, 0.6)',
     backdropFilter: 'blur(8px)',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: isMobile ? 'flex-end' : 'center',
     justifyContent: 'center',
     zIndex: 10000,
-    animation: 'fadeIn 0.2s ease-out',
+    padding: isMobile ? '0' : '20px',
+    animation: 'fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   };
 
+  // Responsive modal styles
   const modalStyle = {
     background: isDark 
-      ? 'linear-gradient(135deg, rgba(31, 27, 46, 0.98) 0%, rgba(20, 19, 34, 0.95) 100%)'
-      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%)',
-    borderRadius: '16px',
-    padding: '32px',
-    maxWidth: '480px',
-    width: '90%',
-    maxHeight: '80vh',
-    border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.2)'}`,
-    boxShadow: isDark 
-      ? '0 20px 60px rgba(105, 19, 224, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4)'
-      : '0 20px 60px rgba(59, 130, 246, 0.1), 0 8px 32px rgba(0, 0, 0, 0.1)',
-    backdropFilter: 'blur(20px)',
+      ? 'linear-gradient(145deg, #1f1b2e 0%, #141322 100%)'
+      : 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+    borderRadius: isMobile ? '20px 20px 0 0' : '16px',
+    padding: isMobile ? '24px 20px 32px' : '32px',
+    maxWidth: isMobile ? '100vw' : '480px',
+    width: isMobile ? '100%' : '90%',
+    maxHeight: isMobile ? '85vh' : '70vh',
+    overflowY: 'auto',
+    border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+    boxShadow: isDark
+      ? '0 20px 60px rgba(105, 19, 224, 0.15), 0 8px 24px rgba(0, 0, 0, 0.4)'
+      : '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.1)',
     position: 'relative',
-    animation: 'slideInScale 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    animation: isMobile 
+      ? 'slideUpMobile 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+      : 'scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    // Safe area adjustments for mobile
+    paddingBottom: isMobile ? `max(32px, env(safe-area-inset-bottom))` : '32px',
   };
 
+  // Header styles
   const headerStyle = {
     display: 'flex',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: '24px',
+    paddingBottom: '16px',
+    borderBottom: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.15)' : 'rgba(59, 130, 246, 0.15)'}`,
+  };
+
+  const titleStyle = {
+    fontSize: isMobile ? '18px' : '20px',
+    fontWeight: '700',
+    color: isDark ? '#f4f3ff' : '#0f172a',
+    margin: 0,
+    letterSpacing: '-0.025em',
   };
 
   const closeButtonStyle = {
     background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    padding: '8px',
+    border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
     borderRadius: '8px',
-    color: isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)',
+    padding: '8px',
+    cursor: 'pointer',
+    color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
     transition: 'all 0.2s ease',
-  };
-
-  const titleStyle = {
-    fontSize: '20px',
-    fontWeight: '700',
-    color: isDark ? '#f4f3ff' : '#0f172a',
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
+    justifyContent: 'center',
+    minWidth: '36px',
+    minHeight: '36px',
   };
 
+  // Content area styles
   const contentStyle = {
     display: 'flex',
     flexDirection: 'column',
     gap: '20px',
-  };
-
-  const statCardStyle = {
-    background: isDark 
-      ? 'rgba(105, 19, 224, 0.1)' 
-      : 'rgba(59, 130, 246, 0.05)',
-    borderRadius: '12px',
-    padding: '20px',
-    border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.15)'}`,
-    backdropFilter: 'blur(10px)',
-  };
-
-  const statRowStyle = {
-    display: 'flex',
+    minHeight: '120px',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: '16px',
-  };
-
-  const statLabelStyle = {
-    fontSize: '14px',
-    fontWeight: '500',
-    color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-  };
-
-  const statValueStyle = {
-    fontSize: '18px',
-    fontWeight: '700',
-    color: isDark ? '#f4f3ff' : '#0f172a',
-  };
-
-  const statusCardStyle = (isValid) => ({
-    background: isValid 
-      ? (isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)')
-      : (isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.1)'),
-    borderRadius: '12px',
-    padding: '20px',
-    border: `1px solid ${isValid 
-      ? (isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)')
-      : (isDark ? 'rgba(239, 68, 68, 0.3)' : 'rgba(239, 68, 68, 0.2)')}`,
-    backdropFilter: 'blur(10px)',
+    justifyContent: 'center',
     textAlign: 'center',
-  });
-
-  const loadingStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '16px',
-    padding: '40px 20px',
   };
 
-  const LoadingSpinner = () => (
-    <div style={{
-      width: '40px',
-      height: '40px',
-      border: `3px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
-      borderTop: `3px solid ${isDark ? '#6913e0' : '#3b82f6'}`,
-      borderRadius: '50%',
-      animation: 'spin 1s linear infinite',
-    }} />);
-
-
-
-
-  return (
-    <>
+  // Loading state
+  if (isLoading) {
+    return (
       <div style={overlayStyle} onClick={onClose}>
         <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-          {/* Header */}
           <div style={headerStyle}>
-            <div style={titleStyle}>
-              <FiZap size={24} style={{ color: isDark ? '#6913e0' : '#3b82f6' }} />
-              Pipeline Validation
-            </div>
+            <h2 style={titleStyle}>Validating Pipeline</h2>
             <button 
               style={closeButtonStyle}
               onClick={onClose}
               onMouseEnter={(e) => {
-                e.target.style.background = isDark ? 'rgba(105, 19, 224, 0.1)' : 'rgba(59, 130, 246, 0.1)';
-                e.target.style.color = isDark ? '#a78bfa' : '#3b82f6';
+                e.target.style.background = isDark ? 'rgba(31, 27, 46, 0.6)' : 'rgba(248, 250, 252, 0.6)';
               }}
               onMouseLeave={(e) => {
                 e.target.style.background = 'none';
-                e.target.style.color = isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)';
               }}
             >
-              <FiX size={20} />
+              <FiX size={16} />
             </button>
           </div>
-
-          {/* Content */}
+          
           <div style={contentStyle}>
-            {isLoading ? (
-              <div style={loadingStyle}>
-                <LoadingSpinner />
-                <div style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: isDark ? '#f4f3ff' : '#0f172a',
-                }}>
-                  Analyzing Pipeline...
-                </div>
-                <div style={{
-                  fontSize: '14px',
-                  color: isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)',
-                }}>
-                  Validating structure and connections
-                </div>
-              </div>
-            ) : validationResult ? (
-              <>
-                {/* Pipeline Statistics */}
-                <div style={statCardStyle}>
-                  <div style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: isDark ? '#f4f3ff' : '#0f172a',
-                    marginBottom: '16px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                  }}>
-                    <FiActivity size={18} />
-                    Pipeline Statistics
-                  </div>
-
-                  <div style={statRowStyle}>
-                    <div style={statLabelStyle}>
-                      <div style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: isDark ? '#6913e0' : '#3b82f6',
-                        boxShadow: `0 0 8px ${isDark ? '#6913e0' : '#3b82f6'}`,
-                      }} />
-                      Components
-                    </div>
-                    <div style={statValueStyle}>{validationResult.num_nodes}</div>
-                  </div>
-
-                  <div style={statRowStyle}>
-                    <div style={statLabelStyle}>
-                      <div style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: isDark ? '#6913e0' : '#3b82f6',
-                        boxShadow: `0 0 8px ${isDark ? '#6913e0' : '#3b82f6'}`,
-                      }} />
-                      Connections
-                    </div>
-                    <div style={statValueStyle}>{validationResult.num_edges}</div>
-                  </div>
-
-                  <div style={{ ...statRowStyle, marginBottom: 0 }}>
-                    <div style={statLabelStyle}>
-                      <div style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: validationResult.is_dag 
-                          ? (isDark ? '#10b981' : '#059669')
-                          : (isDark ? '#ef4444' : '#dc2626'),
-                        boxShadow: `0 0 8px ${validationResult.is_dag 
-                          ? (isDark ? '#10b981' : '#059669')
-                          : (isDark ? '#ef4444' : '#dc2626')}`,
-                      }} />
-                      Pipeline Type
-                    </div>
-                    <div style={{
-                      ...statValueStyle,
-                      color: validationResult.is_dag 
-                        ? (isDark ? '#34d399' : '#059669')
-                        : (isDark ? '#f87171' : '#dc2626'),
-                    }}>
-                      {validationResult.is_dag ? 'Valid DAG' : 'Has Cycles'}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Validation Status */}
-                <div style={statusCardStyle(validationResult.is_dag)}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '12px',
-                    marginBottom: '12px',
-                  }}>
-                    {validationResult.is_dag ? (
-                      <FiCheck size={32} style={{ 
-                        color: isDark ? '#34d399' : '#059669',
-                        background: isDark ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.15)',
-                        borderRadius: '50%',
-                        padding: '8px',
-                      }} />
-                    ) : (
-                      <FiAlertCircle size={32} style={{ 
-                        color: isDark ? '#f87171' : '#dc2626',
-                        background: isDark ? 'rgba(239, 68, 68, 0.2)' : 'rgba(239, 68, 68, 0.15)',
-                        borderRadius: '50%',
-                        padding: '8px',
-                      }} />
-                    )}
-                    <div style={{
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      color: validationResult.is_dag 
-                        ? (isDark ? '#34d399' : '#059669')
-                        : (isDark ? '#f87171' : '#dc2626'),
-                    }}>
-                      {validationResult.is_dag ? 'Pipeline Valid!' : 'Validation Failed'}
-                    </div>
-                  </div>
-                  
-                  <div style={{
-                    fontSize: '14px',
-                    lineHeight: '1.5',
-                    color: validationResult.is_dag 
-                      ? (isDark ? 'rgba(52, 211, 153, 0.8)' : 'rgba(5, 150, 105, 0.8)')
-                      : (isDark ? 'rgba(248, 113, 113, 0.8)' : 'rgba(220, 38, 38, 0.8)'),
-                  }}>
-                    {validationResult.is_dag 
-                      ? '✨ Your pipeline structure is valid and ready for execution. All components form a proper directed acyclic graph without circular dependencies.'
-                      : '⚠️ Pipeline contains circular dependencies that prevent execution. Please review your connections and remove any loops in the workflow.'}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div style={{
-                  display: 'flex',
-                  gap: '12px',
-                  justifyContent: 'flex-end',
-                  paddingTop: '8px',
-                }}>
-                  <button
-                    onClick={onClose}
-                    style={{
-                      background: 'none',
-                      border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
-                      borderRadius: '8px',
-                      padding: '10px 20px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      color: isDark ? 'rgba(167, 139, 250, 0.9)' : 'rgba(100, 116, 139, 0.9)',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      backdropFilter: 'blur(10px)',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.background = isDark ? 'rgba(105, 19, 224, 0.1)' : 'rgba(59, 130, 246, 0.1)';
-                      e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.5)' : 'rgba(59, 130, 246, 0.5)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = 'none';
-                      e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.3)';
-                    }}
-                  >
-                    Close
-                  </button>
-                  
-                  {validationResult.is_dag && (
-                    <button
-                      onClick={onClose}
-                      style={{
-                        background: `linear-gradient(135deg, ${isDark ? '#6913e0' : '#3b82f6'}, ${isDark ? '#7c3aed' : '#2563eb'})`,
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '10px 20px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: 'white',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        backdropFilter: 'blur(10px)',
-                        boxShadow: isDark 
-                          ? '0 4px 12px rgba(105, 19, 224, 0.3)'
-                          : '0 4px 12px rgba(59, 130, 246, 0.25)',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.transform = 'translateY(-1px)';
-                        e.target.style.boxShadow = isDark 
-                          ? '0 6px 16px rgba(105, 19, 224, 0.4)'
-                          : '0 6px 16px rgba(59, 130, 246, 0.35)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.transform = 'translateY(0)';
-                        e.target.style.boxShadow = isDark 
-                          ? '0 4px 12px rgba(105, 19, 224, 0.3)'
-                          : '0 4px 12px rgba(59, 130, 246, 0.25)';
-                      }}
-                    >
-                      Continue to Deploy
-                    </button>
-                  )}
-                </div>
-              </>
-            ) : null}
+            <div style={{
+              width: isMobile ? '48px' : '64px',
+              height: isMobile ? '48px' : '64px',
+              borderRadius: '50%',
+              background: isDark 
+                ? 'linear-gradient(135deg, #6913e0, #7c3aed)'
+                : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '16px',
+              animation: 'pulse 2s infinite',
+            }}>
+              <FiLoader 
+                size={isMobile ? 20 : 24} 
+                color="white" 
+                style={{ animation: 'spin 1s linear infinite' }}
+              />
+            </div>
+            
+            <div>
+              <h3 style={{
+                fontSize: isMobile ? '16px' : '18px',
+                fontWeight: '600',
+                color: isDark ? '#f4f3ff' : '#0f172a',
+                margin: '0 0 8px 0',
+              }}>
+                Analyzing Pipeline
+              </h3>
+              <p style={{
+                fontSize: isMobile ? '13px' : '14px',
+                color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
+                margin: 0,
+                lineHeight: '1.5',
+              }}>
+                Checking node connections and validating workflow structure...
+              </p>
+            </div>
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* CSS Animations */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        @keyframes slideInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.9) translateY(20px);
+  // Results state
+  if (validationResult) {
+    const isValid = validationResult.is_dag && !validationResult.error;
+    
+    return (
+      <div style={overlayStyle} onClick={onClose}>
+        <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+          <div style={headerStyle}>
+            <h2 style={titleStyle}>Pipeline Validation</h2>
+            <button 
+              style={closeButtonStyle}
+              onClick={onClose}
+              onMouseEnter={(e) => {
+                e.target.style.background = isDark ? 'rgba(31, 27, 46, 0.6)' : 'rgba(248, 250, 252, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'none';
+              }}
+            >
+              <FiX size={16} />
+            </button>
+          </div>
+          
+          <div style={contentStyle}>
+            {/* Status Icon */}
+            <div style={{
+              width: isMobile ? '56px' : '72px',
+              height: isMobile ? '56px' : '72px',
+              borderRadius: '50%',
+              background: isValid 
+                ? 'linear-gradient(135deg, #10b981, #059669)'
+                : 'linear-gradient(135deg, #ef4444, #dc2626)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '20px',
+              boxShadow: isValid
+                ? '0 8px 24px rgba(16, 185, 129, 0.3)'
+                : '0 8px 24px rgba(239, 68, 68, 0.3)',
+            }}>
+              {isValid ? (
+                <FiCheck size={isMobile ? 24 : 32} color="white" />
+              ) : (
+                <FiAlertCircle size={isMobile ? 24 : 32} color="white" />
+              )}
+            </div>
+
+            {/* Status Message */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{
+                fontSize: isMobile ? '18px' : '22px',
+                fontWeight: '700',
+                color: isDark ? '#f4f3ff' : '#0f172a',
+                margin: '0 0 8px 0',
+              }}>
+                {isValid ? 'Pipeline Valid!' : 'Validation Issues Found'}
+              </h3>
+              <p style={{
+                fontSize: isMobile ? '14px' : '16px',
+                color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
+                margin: 0,
+                lineHeight: '1.5',
+              }}>
+                {isValid 
+                  ? 'Your pipeline structure is valid and ready to run.'
+                  : validationResult.error 
+                    ? `Error: ${validationResult.error}`
+                    : 'The pipeline contains cycles and is not a valid DAG.'
+                }
+              </p>
+            </div>
+
+            {/* Statistics Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)',
+              gap: isMobile ? '12px' : '16px',
+              width: '100%',
+              marginBottom: '24px',
+            }}>
+              {/* Nodes Count */}
+              <div style={{
+                padding: isMobile ? '16px 12px' : '20px 16px',
+                background: isDark 
+                  ? 'rgba(31, 27, 46, 0.6)' 
+                  : 'rgba(248, 250, 252, 0.8)',
+                borderRadius: '12px',
+                border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+                textAlign: 'center',
+              }}>
+                <div style={{
+                  fontSize: isMobile ? '20px' : '24px',
+                  fontWeight: '700',
+                  color: isDark ? '#6913e0' : '#3b82f6',
+                  marginBottom: '4px',
+                }}>
+                  {validationResult.num_nodes}
+                </div>
+                <div style={{
+                  fontSize: isMobile ? '11px' : '12px',
+                  color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
+                  fontWeight: '500',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}>
+                  Nodes
+                </div>
+              </div>
+
+              {/* Edges Count */}
+              <div style={{
+                padding: isMobile ? '16px 12px' : '20px 16px',
+                background: isDark 
+                  ? 'rgba(31, 27, 46, 0.6)' 
+                  : 'rgba(248, 250, 252, 0.8)',
+                borderRadius: '12px',
+                border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
+                textAlign: 'center',
+              }}>
+                <div style={{
+                  fontSize: isMobile ? '20px' : '24px',
+                  fontWeight: '700',
+                  color: isDark ? '#6913e0' : '#3b82f6',
+                  marginBottom: '4px',
+                }}>
+                  {validationResult.num_edges}
+                </div>
+                <div style={{
+                  fontSize: isMobile ? '11px' : '12px',
+                  color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
+                  fontWeight: '500',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}>
+                  Connections
+                </div>
+              </div>
+
+              {/* DAG Status - Full width on mobile */}
+              <div style={{
+                padding: isMobile ? '16px 12px' : '20px 16px',
+                background: validationResult.is_dag
+                  ? (isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)')
+                  : (isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.1)'),
+                borderRadius: '12px',
+                border: `1px solid ${
+                  validationResult.is_dag
+                    ? (isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)')
+                    : (isDark ? 'rgba(239, 68, 68, 0.3)' : 'rgba(239, 68, 68, 0.2)')
+                }`,
+                textAlign: 'center',
+                gridColumn: isMobile ? '1 / -1' : 'auto',
+              }}>
+                <div style={{
+                  fontSize: isMobile ? '20px' : '24px',
+                  fontWeight: '700',
+                  color: validationResult.is_dag
+                    ? (isDark ? '#34d399' : '#059669')
+                    : (isDark ? '#f87171' : '#dc2626'),
+                  marginBottom: '4px',
+                }}>
+                  {validationResult.is_dag ? '✓' : '✗'}
+                </div>
+                <div style={{
+                  fontSize: isMobile ? '11px' : '12px',
+                  color: validationResult.is_dag
+                    ? (isDark ? '#34d399' : '#059669')
+                    : (isDark ? '#f87171' : '#dc2626'),
+                  fontWeight: '500',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}>
+                  {validationResult.is_dag ? 'Valid DAG' : 'Has Cycles'}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <button
+              onClick={onClose}
+              style={{
+                background: isValid
+                  ? (isDark 
+                      ? 'linear-gradient(135deg, #10b981, #059669)'
+                      : 'linear-gradient(135deg, #10b981, #059669)'
+                    )
+                  : (isDark 
+                      ? 'linear-gradient(135deg, #6913e0, #7c3aed)'
+                      : 'linear-gradient(135deg, #3b82f6, #2563eb)'
+                    ),
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: isMobile ? '14px 28px' : '16px 32px',
+                fontSize: isMobile ? '14px' : '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                minWidth: isMobile ? '200px' : '240px',
+                boxShadow: isValid
+                  ? '0 4px 16px rgba(16, 185, 129, 0.3)'
+                  : (isDark 
+                      ? '0 4px 16px rgba(105, 19, 224, 0.3)'
+                      : '0 4px 16px rgba(59, 130, 246, 0.3)'
+                    ),
+              }}
+              onMouseEnter={(e) => {
+                if (!isMobile) {
+                  e.target.style.transform = 'translateY(-1px) scale(1.02)';
+                  e.target.style.boxShadow = isValid
+                    ? '0 6px 20px rgba(16, 185, 129, 0.4)'
+                    : (isDark 
+                        ? '0 6px 20px rgba(105, 19, 224, 0.4)'
+                        : '0 6px 20px rgba(59, 130, 246, 0.4)'
+                      );
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isMobile) {
+                  e.target.style.transform = 'translateY(0) scale(1)';
+                  e.target.style.boxShadow = isValid
+                    ? '0 4px 16px rgba(16, 185, 129, 0.3)'
+                    : (isDark 
+                        ? '0 4px 16px rgba(105, 19, 224, 0.3)'
+                        : '0 4px 16px rgba(59, 130, 246, 0.3)'
+                      );
+                }
+              }}
+              onTouchStart={(e) => {
+                if (isMobile) {
+                  e.target.style.transform = 'scale(0.98)';
+                }
+              }}
+              onTouchEnd={(e) => {
+                if (isMobile) {
+                  e.target.style.transform = 'scale(1)';
+                }
+              }}
+            >
+              {isValid ? 'Continue' : 'Got it'}
+            </button>
+          </div>
+        </div>
+
+        {/* Custom animations */}
+        <style jsx>{`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
           }
-          to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
+
+          @keyframes scaleIn {
+            from {
+              opacity: 0;
+              transform: scale(0.9);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
           }
-        }
-        
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
-    </>
-  );
+
+          @keyframes slideUpMobile {
+            from {
+              opacity: 0;
+              transform: translateY(100%);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+          }
+
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  return null;
 };
 
 export default ValidationModal;

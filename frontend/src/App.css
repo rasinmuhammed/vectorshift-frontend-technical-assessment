@@ -1,4 +1,4 @@
-/* Enhanced App.css - Premium VectorShift-inspired Pipeline Builder */
+/* Enhanced App.css - Fully Responsive Pipeline Builder */
 
 /* --- Base & Theme Variables --- */
 :root {
@@ -33,11 +33,78 @@
   --header-button-hover-bg-dark: #2a2342;
   --controls-bg-dark: rgba(20, 19, 34, 0.9);
   
-  /* Pipeline Container - Optimized */
+  /* Responsive Layout Variables */
   --pipeline-margin: 16px;
   --pipeline-border-radius: 12px;
-  --toolbar-height: 110px; /* Reduced from 120px */
-  --header-height: 64px; /* Reduced from 72px */
+  --toolbar-height: 110px;
+  --header-height: 64px;
+  --bottom-bar-height: 80px;
+
+  /* Breakpoints */
+  --mobile-breakpoint: 768px;
+  --tablet-breakpoint: 1024px;
+  --desktop-breakpoint: 1200px;
+  --large-desktop-breakpoint: 1440px;
+}
+
+/* Desktop First - Large screens (1440px+) */
+@media (min-width: 1440px) {
+  :root {
+    --pipeline-margin: 24px;
+    --toolbar-height: 120px;
+    --header-height: 72px;
+    --bottom-bar-height: 90px;
+  }
+}
+
+/* Standard Desktop (1200px - 1439px) */
+@media (max-width: 1439px) and (min-width: 1200px) {
+  :root {
+    --pipeline-margin: 20px;
+    --toolbar-height: 115px;
+    --header-height: 68px;
+    --bottom-bar-height: 85px;
+  }
+}
+
+/* Small Desktop/Tablet Landscape (1024px - 1199px) */
+@media (max-width: 1199px) and (min-width: 1024px) {
+  :root {
+    --pipeline-margin: 16px;
+    --toolbar-height: 110px;
+    --header-height: 64px;
+    --bottom-bar-height: 80px;
+  }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  :root {
+    --pipeline-margin: 12px;
+    --toolbar-height: 100px;
+    --header-height: 60px;
+    --bottom-bar-height: 75px;
+  }
+}
+
+/* Mobile Landscape (480px - 767px) */
+@media (max-width: 767px) and (min-width: 480px) {
+  :root {
+    --pipeline-margin: 8px;
+    --toolbar-height: 90px;
+    --header-height: 56px;
+    --bottom-bar-height: 70px;
+  }
+}
+
+/* Mobile Portrait (320px - 479px) */
+@media (max-width: 479px) {
+  :root {
+    --pipeline-margin: 6px;
+    --toolbar-height: 85px;
+    --header-height: 52px;
+    --bottom-bar-height: 65px;
+  }
 }
 
 * {
@@ -50,12 +117,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg-primary-light);
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 /* --- Main App Container --- */
 .app {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
   position: relative;
   overflow: hidden;
   display: flex;
@@ -73,7 +142,7 @@ body {
   color: var(--text-primary-dark);
 }
 
-/* --- Header - Optimized --- */
+/* --- Header - Fully Responsive --- */
 .app-header {
   display: flex;
   align-items: center;
@@ -86,6 +155,7 @@ body {
   backdrop-filter: blur(20px);
   position: relative;
   z-index: 1000;
+  overflow: hidden;
 }
 
 .app.light .app-header {
@@ -102,25 +172,30 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: 1;
+  min-width: 0;
 }
 
-/* Editable Pipeline Name */
+/* Responsive Pipeline Name */
 .pipeline-name-container {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
 .pipeline-name-input {
   background: transparent;
   border: 1px solid transparent;
-  font-size: 15px;
+  font-size: clamp(13px, 2vw, 15px);
   font-weight: 600;
   padding: 6px 10px;
   border-radius: 6px;
   transition: all 0.2s ease;
-  min-width: 120px;
+  min-width: 100px;
   max-width: 250px;
+  width: 100%;
 }
 
 .app.light .pipeline-name-input {
@@ -149,7 +224,7 @@ body {
 }
 
 .breadcrumb-separator {
-  font-size: 14px;
+  font-size: clamp(12px, 1.8vw, 14px);
   font-weight: 400;
 }
 .app.light .breadcrumb-separator { color: var(--text-secondary-light); }
@@ -158,7 +233,8 @@ body {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .status-indicator {
@@ -167,10 +243,12 @@ body {
   gap: 6px;
   padding: 5px 12px;
   border-radius: 16px;
-  font-size: 12px;
+  font-size: clamp(10px, 1.5vw, 12px);
   font-weight: 500;
   backdrop-filter: blur(10px);
+  white-space: nowrap;
 }
+
 .app.light .status-indicator { 
   background: rgba(16, 185, 129, 0.1);
   color: #059669;
@@ -190,19 +268,14 @@ body {
   animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
 .header-button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 8px 12px;
   border-radius: 7px;
-  font-size: 12px;
+  font-size: clamp(10px, 1.4vw, 12px);
   font-weight: 500;
   border: 1px solid;
   cursor: pointer;
@@ -210,6 +283,7 @@ body {
   backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 .app.light .header-button {
@@ -251,7 +325,7 @@ body {
   background: linear-gradient(135deg, var(--accent-violet-hover), #8b5cf6);
 }
 
-/* --- Toolbar - Completely Redesigned --- */
+/* --- Toolbar - Fully Responsive --- */
 .toolbar-container {
   padding: 0 24px;
   border-bottom: 1px solid;
@@ -263,6 +337,7 @@ body {
   backdrop-filter: blur(20px);
   position: relative;
   z-index: 999;
+  overflow: hidden;
 }
 
 .app.light .toolbar-container {
@@ -290,7 +365,7 @@ body {
 
 .toolbar-tab {
   padding-bottom: 8px;
-  font-size: 13px;
+  font-size: clamp(11px, 1.6vw, 13px);
   font-weight: 500;
   cursor: pointer;
   background: none;
@@ -302,6 +377,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 .app.light .toolbar-tab { color: var(--text-secondary-light); }
 .app.dark .toolbar-tab { color: var(--text-secondary-dark); }
@@ -340,7 +416,7 @@ body {
   background: var(--text-secondary-dark);
 }
 
-/* --- Draggable Node - Completely Redesigned --- */
+/* --- Draggable Node - Fully Responsive --- */
 .draggable-node {
   border: 1px solid;
   border-radius: 8px;
@@ -353,8 +429,8 @@ body {
   backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
-  height: 44px;
-  min-width: 140px;
+  height: clamp(40px, 5vh, 44px);
+  min-width: 120px;
   max-width: 180px;
   flex-shrink: 0;
 }
@@ -383,8 +459,8 @@ body {
 .draggable-node:active { cursor: grabbing; }
 
 .draggable-node-icon {
-  width: 24px;
-  height: 24px;
+  width: clamp(20px, 3vw, 24px);
+  height: clamp(20px, 3vw, 24px);
   flex-shrink: 0;
   border-radius: 5px;
   display: flex;
@@ -413,7 +489,7 @@ body {
   overflow: hidden;
 }
 .draggable-node-label { 
-  font-size: 12px; 
+  font-size: clamp(10px, 1.5vw, 12px);
   font-weight: 600;
   margin-bottom: 1px;
   white-space: nowrap;
@@ -424,7 +500,7 @@ body {
 .app.dark .draggable-node-label { color: var(--text-primary-dark); }
 
 .draggable-node-description { 
-  font-size: 10px; 
+  font-size: clamp(8px, 1.2vw, 10px);
   line-height: 1.2;
   opacity: 0.8;
   white-space: nowrap;
@@ -434,7 +510,7 @@ body {
 .app.light .draggable-node-description { color: var(--text-secondary-light); }
 .app.dark .draggable-node-description { color: var(--text-secondary-dark); }
 
-/* --- Pipeline Canvas Container - Optimized --- */
+/* --- Pipeline Canvas Container - Fully Responsive --- */
 .pipeline-canvas {
   flex: 1;
   position: relative;
@@ -443,6 +519,7 @@ body {
   overflow: hidden;
   border: 1px solid;
   backdrop-filter: blur(20px);
+  min-height: 0; /* Allow flex shrinking */
 }
 
 .app.light .pipeline-canvas {
@@ -456,280 +533,12 @@ body {
   box-shadow: 0 4px 20px rgba(105, 19, 224, 0.06);
 }
 
-/* --- Floating Status Bar - Optimized --- */
-.floating-status-bar {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  border-radius: 10px;
-  backdrop-filter: blur(20px);
-  border: 1px solid;
-  z-index: 200;
-  font-size: 11px;
-  font-weight: 500;
-}
-.app.light .floating-status-bar {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--border-light);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  color: var(--text-primary-light);
-}
-.app.dark .floating-status-bar {
-  background: rgba(20, 19, 34, 0.9);
-  border-color: var(--border-dark);
-  box-shadow: var(--node-shadow-dark);
-  color: var(--text-primary-dark);
-}
-
-.status-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.status-item.ready {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
-  color: #34d399;
-}
-
-.status-item.in-progress {
-  background: rgba(251, 191, 36, 0.15);
-  border-color: rgba(251, 191, 36, 0.3);
-  color: #fbbf24;
-}
-
-/* --- Floating Validate Button - Optimized --- */
-.floating-validate-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(20px);
-  color: white;
-  z-index: 200;
-  font-family: inherit;
-  letter-spacing: 0.025em;
-}
-
-.floating-validate-button.disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.app.light .floating-validate-button {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  box-shadow: 0 3px 12px rgba(59, 130, 246, 0.2);
-}
-.app.dark .floating-validate-button {
-  background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-hover));
-  box-shadow: 0 3px 12px rgba(105, 19, 224, 0.25);
-}
-
-.floating-validate-button:hover:not(.disabled) {
-  transform: translateY(-1px) scale(1.01);
-}
-.app.light .floating-validate-button:hover:not(.disabled) {
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
-}
-.app.dark .floating-validate-button:hover:not(.disabled) {
-  box-shadow: 0 6px 20px rgba(105, 19, 224, 0.35);
-}
-
-/* --- Zoom Display - Optimized --- */
-.zoom-display {
-  position: absolute;
-  bottom: 120px;
-  left: 20px;
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-size: 11px;
-  font-weight: 500;
-  backdrop-filter: blur(20px);
-  border: 1px solid;
-  z-index: 100;
-}
-.app.light .zoom-display {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--border-light);
-  color: var(--text-primary-light);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-.app.dark .zoom-display {
-  background: rgba(20, 19, 34, 0.9);
-  border-color: var(--border-dark);
-  color: var(--text-primary-dark);
-  box-shadow: var(--node-shadow-dark);
-}
-
-/* --- React Flow Overrides & Custom Controls --- */
-.react-flow__controls {
-  position: absolute !important;
-  bottom: 20px !important;
-  left: 20px !important;
-  border-radius: 10px;
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  border: 1px solid;
-  z-index: 100;
-}
-.app.light .react-flow__controls {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--border-light);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-.app.dark .react-flow__controls {
-  background: rgba(20, 19, 34, 0.9);
-  border-color: var(--border-dark);
-  box-shadow: var(--node-shadow-dark);
-}
-
-.react-flow__controls-button {
-  background: transparent !important;
-  border: none !important;
-  padding: 8px !important;
-  transition: all 0.2s ease !important;
-}
-.app.light .react-flow__controls-button {
-  color: var(--text-primary-light) !important;
-}
-.app.dark .react-flow__controls-button {
-  color: var(--text-primary-dark) !important;
-}
-.app.light .react-flow__controls-button:hover { 
-  background: rgba(59, 130, 246, 0.1) !important; 
-}
-.app.dark .react-flow__controls-button:hover { 
-  background: rgba(105, 19, 224, 0.2) !important; 
-}
-
-.react-flow__minimap {
-  position: absolute !important;
-  bottom: 20px !important;
-  right: 20px !important;
-  border-radius: 10px;
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  border: 1px solid;
-  z-index: 100;
-  width: 180px !important;
-  height: 120px !important;
-}
-.app.light .react-flow__minimap {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--border-light);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-.app.dark .react-flow__minimap {
-  background: rgba(20, 19, 34, 0.9);
-  border-color: var(--border-dark);
-  box-shadow: var(--node-shadow-dark);
-}
-
-/* --- Top Right Controls - Optimized --- */
-.top-right-controls {
-  position: absolute;
-  top: 20px;
-  right: 160px;
-  display: flex;
-  gap: 4px;
-  border-radius: 10px;
-  padding: 4px;
-  backdrop-filter: blur(20px);
-  border: 1px solid;
-  z-index: 100;
-}
-.app.light .top-right-controls {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--border-light);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-.app.dark .top-right-controls {
-  background: rgba(20, 19, 34, 0.9);
-  border-color: var(--border-dark);
-  box-shadow: var(--node-shadow-dark);
-}
-
-.top-right-controls button {
-  background: none;
-  border: none;
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-.app.light .top-right-controls button { 
-  color: var(--text-secondary-light); 
-}
-.app.dark .top-right-controls button { 
-  color: var(--text-secondary-dark); 
-}
-.app.light .top-right-controls button:hover { 
-  background: rgba(59, 130, 246, 0.1); 
-  color: #3b82f6;
-}
-.app.dark .top-right-controls button:hover { 
-  background: rgba(105, 19, 224, 0.2); 
-  color: var(--accent-violet);
-}
-
-/* --- Chat Button - Optimized --- */
-.chat-button {
-  position: absolute;
-  bottom: 20px;
-  right: 220px;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(20px);
-  color: white;
-  z-index: 100;
-}
-.app.light .chat-button {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-}
-.app.dark .chat-button {
-  background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-hover));
-  box-shadow: 0 4px 12px rgba(105, 19, 224, 0.3);
-}
-.chat-button:hover {
-  transform: translateY(-2px) scale(1.02);
-}
-
-/* --- Enhanced Node Styles - Optimized Sizes --- */
+/* --- Enhanced Node Styles - Fully Responsive --- */
 .sophisticated-node {
-  min-width: 160px; /* Reduced from 180px */
-  min-height: 80px; /* Reduced from 100px */
-  border-radius: 10px; /* Reduced from 12px */
-  padding: 14px; /* Reduced from 18px */
+  min-width: clamp(140px, 20vw, 180px);
+  min-height: clamp(70px, 10vh, 100px);
+  border-radius: 10px;
+  padding: clamp(10px, 2vw, 14px);
   font-family: inherit;
   position: relative;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -758,10 +567,10 @@ body {
   box-shadow: 0 6px 20px rgba(105, 19, 224, 0.2) !important;
 }
 
-/* --- React Flow Handle Styles - Optimized --- */
+/* --- React Flow Handle Styles - Responsive --- */
 .react-flow__handle {
-  width: 10px !important;
-  height: 10px !important;
+  width: clamp(8px, 1.2vw, 10px) !important;
+  height: clamp(8px, 1.2vw, 10px) !important;
   border: 2px solid !important;
   transition: all 0.2s ease !important;
 }
@@ -787,24 +596,102 @@ body {
   box-shadow: 0 0 0 3px rgba(105, 19, 224, 0.2) !important;
 }
 
-/* --- Dashed Illuminated Connection Lines --- */
-.react-flow__edge-path {
-  stroke-dasharray: 6, 3;
-  animation: dash-flow 2s linear infinite;
-  filter: drop-shadow(0 0 1px currentColor);
+/* --- Floating Elements - Responsive --- */
+.floating-status-bar {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  backdrop-filter: blur(20px);
+  border: 1px solid;
+  z-index: 200;
+  font-size: clamp(9px, 1.3vw, 11px);
+  font-weight: 500;
+  max-width: calc(100vw - 40px);
 }
 
-@keyframes dash-flow {
-  to {
-    stroke-dashoffset: -9;
-  }
+.floating-validate-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: clamp(10px, 1.4vw, 12px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+  color: white;
+  z-index: 200;
+  font-family: inherit;
+  letter-spacing: 0.025em;
+  white-space: nowrap;
 }
 
-.app.dark .react-flow__edge-path {
-  filter: drop-shadow(0 0 2px var(--accent-violet)) drop-shadow(0 0 1px var(--accent-violet));
+.floating-validate-button.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
-/* --- Start Content Styling - Optimized --- */
+.app.light .floating-validate-button {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 3px 12px rgba(59, 130, 246, 0.2);
+}
+.app.dark .floating-validate-button {
+  background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-hover));
+  box-shadow: 0 3px 12px rgba(105, 19, 224, 0.25);
+}
+
+/* --- React Flow Controls - Responsive --- */
+.react-flow__controls {
+  position: absolute !important;
+  bottom: 20px !important;
+  left: 20px !important;
+  border-radius: 10px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  border: 1px solid;
+  z-index: 100;
+  scale: clamp(0.8, 1.2vw, 1);
+}
+
+.react-flow__minimap {
+  position: absolute !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  border-radius: 10px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  border: 1px solid;
+  z-index: 100;
+  width: clamp(120px, 20vw, 180px) !important;
+  height: clamp(80px, 13vw, 120px) !important;
+}
+
+.top-right-controls {
+  position: absolute;
+  top: 20px;
+  right: 160px;
+  display: flex;
+  gap: 4px;
+  border-radius: 10px;
+  padding: 4px;
+  backdrop-filter: blur(20px);
+  border: 1px solid;
+  z-index: 100;
+  scale: clamp(0.8, 1.1vw, 1);
+}
+
+/* --- Start Content - Responsive --- */
 .start-content {
   display: flex;
   flex-direction: column;
@@ -814,22 +701,12 @@ body {
 }
 
 .welcome-card {
-  padding: 20px;
+  padding: clamp(12px, 2.5vw, 20px);
   border-radius: 10px;
   border: 1px solid;
   backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
-}
-
-.app.light .welcome-card {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.04) 100%);
-  border-color: rgba(59, 130, 246, 0.15);
-}
-
-.app.dark .welcome-card {
-  background: linear-gradient(135deg, rgba(105, 19, 224, 0.12) 0%, rgba(124, 58, 237, 0.08) 100%);
-  border-color: rgba(105, 19, 224, 0.25);
 }
 
 .feature-cards {
@@ -840,64 +717,215 @@ body {
   -ms-overflow-style: none;
 }
 
-.feature-cards::-webkit-scrollbar {
-  display: none;
-}
-
 .feature-card {
   padding: 12px;
   border-radius: 8px;
   border: 1px solid;
   backdrop-filter: blur(10px);
   transition: all 0.2s ease;
-  min-width: 160px;
+  min-width: clamp(140px, 25vw, 160px);
   flex-shrink: 0;
 }
 
-.app.light .feature-card {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(59, 130, 246, 0.12);
+/* --- Submit Button Bar - Responsive --- */
+.submit-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(12px, 3vw, 20px) clamp(16px, 4vw, 32px);
+  height: var(--bottom-bar-height);
+  background: var(--controls-bg-light);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid;
+  z-index: 1000;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.04);
 }
 
-.app.dark .feature-card {
+.app.dark .submit-button-container {
+  background: var(--controls-bg-dark);
+  box-shadow: 0 -8px 32px rgba(105, 19, 224, 0.1);
+}
+
+.pipeline-stats {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 3vw, 24px);
+  color: var(--text-secondary-light);
+  font-size: clamp(11px, 1.6vw, 13px);
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.app.dark .pipeline-stats {
+  color: var(--text-secondary-dark);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  padding: clamp(6px, 1.5vw, 10px) clamp(8px, 2vw, 16px);
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  border: 1px solid;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.app.light .stat-item {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.app.dark .stat-item {
   background: rgba(31, 27, 46, 0.6);
-  border-color: rgba(105, 19, 224, 0.18);
+  border-color: rgba(105, 19, 224, 0.2);
 }
 
-.feature-card:hover {
-  transform: translateY(-1px);
+/* --- MAJOR RESPONSIVE BREAKPOINTS --- */
+
+/* Large Desktop (1440px+) - Optimal Experience */
+@media (min-width: 1440px) {
+  .app-header {
+    padding: 16px 32px;
+  }
+  
+  .toolbar-container {
+    padding: 0 32px;
+  }
+  
+  .header-right {
+    gap: 12px;
+  }
+  
+  .toolbar-tabs {
+    gap: 24px;
+  }
+  
+  .draggable-node {
+    min-width: 140px;
+    max-width: 200px;
+  }
 }
 
-.app.light .feature-card:hover {
-  border-color: rgba(59, 130, 246, 0.25);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+/* Standard Desktop (1200px - 1439px) */
+@media (max-width: 1439px) and (min-width: 1200px) {
+  .header-right .header-button {
+    padding: 7px 12px;
+    font-size: 11px;
+  }
+  
+  .toolbar-tabs {
+    gap: 18px;
+  }
 }
 
-.app.dark .feature-card:hover {
-  border-color: rgba(105, 19, 224, 0.35);
-  box-shadow: 0 4px 12px rgba(105, 19, 224, 0.12);
-}
-
-/* --- Responsive Design - Optimized --- */
-@media (max-width: 1200px) {
+/* Small Desktop/Large Tablet (1024px - 1199px) */
+@media (max-width: 1199px) and (min-width: 1024px) {
   .header-right .header-button {
     padding: 6px 10px;
     font-size: 11px;
+    gap: 4px;
+  }
+  
+  .pipeline-canvas {
+    margin: 14px;
+  }
+  
+  .draggable-node {
+    min-width: 120px;
+    max-width: 160px;
+    height: 40px;
+  }
+  
+  .toolbar-tabs {
+    gap: 16px;
+  }
+  
+  .sophisticated-node {
+    min-width: 160px;
+    min-height: 85px;
+    padding: 12px;
+  }
+}
+
+/* Tablet Portrait (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .app-header {
+    padding: 10px 20px;
+  }
+  
+  .toolbar-container {
+    padding: 0 20px;
   }
   
   .pipeline-canvas {
     margin: 12px;
   }
   
+  .header-right {
+    gap: 6px;
+  }
+  
+  .header-right .header-button {
+    padding: 6px 8px;
+    font-size: 10px;
+    gap: 3px;
+  }
+  
+  /* Hide less critical header buttons on tablets */
+  .header-button:not(.primary):nth-last-child(n+3) {
+    display: none;
+  }
+  
+  .status-indicator {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  
+  .toolbar-content {
+    overflow-x: auto;
+    gap: 6px;
+  }
+  
   .draggable-node {
-    min-width: 120px;
-    max-width: 150px;
+    min-width: 110px;
+    max-width: 140px;
+    height: 38px;
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  
+  .sophisticated-node {
+    min-width: 150px;
+    min-height: 80px;
+    padding: 10px;
+  }
+  
+  .react-flow__minimap {
+    width: 140px !important;
+    height: 95px !important;
+  }
+  
+  .top-right-controls {
+    right: 150px;
+    scale: 0.9;
+  }
+  
+  .floating-validate-button {
+    padding: 8px 16px;
+    font-size: 11px;
   }
 }
 
-@media (max-width: 768px) {
+/* Mobile Landscape (480px - 767px) */
+@media (max-width: 767px) and (min-width: 480px) {
   .app-header {
-    padding: 10px 16px;
+    padding: 8px 16px;
   }
   
   .toolbar-container {
@@ -905,44 +933,561 @@ body {
   }
   
   .pipeline-canvas {
-    margin: 10px;
+    margin: 8px;
+  }
+  
+  .header-left {
+    gap: 8px;
+  }
+  
+  .header-right {
+    gap: 4px;
+  }
+  
+  .pipeline-name-container {
+    gap: 4px;
+  }
+  
+  .breadcrumb-separator {
+    display: none; /* Hide breadcrumb on mobile */
+  }
+  
+  /* Show only essential header buttons */
+  .header-button:not(.primary) {
+    display: none;
+  }
+  
+  .header-button.primary {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  
+  .status-indicator {
+    padding: 3px 6px;
+    font-size: 9px;
+    gap: 4px;
+  }
+  
+  .status-dot {
+    width: 4px;
+    height: 4px;
+  }
+  
+  .toolbar-tabs {
+    gap: 12px;
+    padding-top: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .toolbar-tab {
+    font-size: 11px;
+    gap: 4px;
   }
   
   .toolbar-content {
-    flex-direction: column;
-    height: auto;
-    max-height: 80px;
-    overflow-y: auto;
-    min-height: 48px; 
+    padding-bottom: 8px;
+    gap: 6px;
+    flex-direction: row;
+    overflow-x: auto;
   }
   
   .draggable-node {
-    min-width: 100%;
-    max-width: none;
+    min-width: 100px;
+    max-width: 120px;
+    height: 36px;
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  
+  .draggable-node-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .draggable-node-label {
+    font-size: 10px;
+  }
+  
+  .draggable-node-description {
+    font-size: 8px;
+  }
+  
+  .sophisticated-node {
+    min-width: 140px;
+    min-height: 75px;
+    padding: 8px;
+  }
+  
+  .react-flow__controls {
+    bottom: calc(var(--bottom-bar-height) + 10px) !important;
+    left: 10px !important;
+    scale: 0.8;
+  }
+  
+  .react-flow__minimap {
+    width: 120px !important;
+    height: 80px !important;
+    bottom: calc(var(--bottom-bar-height) + 10px) !important;
+    right: 10px !important;
+  }
+  
+  .top-right-controls {
+    top: 15px;
+    right: 15px;
+    scale: 0.8;
+  }
+  
+  .floating-validate-button {
+    top: 15px;
+    right: 15px;
+    padding: 6px 12px;
+    font-size: 10px;
+    border-radius: 6px;
+  }
+  
+  .floating-status-bar {
+    top: 15px;
+    padding: 6px 12px;
+    gap: 8px;
+    font-size: 9px;
+    max-width: calc(100vw - 30px);
+  }
+  
+  /* Adjust start content for mobile landscape */
+  .start-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .welcome-card {
+    padding: 12px;
+  }
+  
+  .feature-cards {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 8px;
+  }
+  
+  .feature-card {
+    min-width: 120px;
+    padding: 10px;
+  }
+}
+
+/* Mobile Portrait (320px - 479px) */
+@media (max-width: 479px) {
+  .app-header {
+    padding: 6px 12px;
+    height: var(--header-height);
+  }
+  
+  .toolbar-container {
+    padding: 0 12px;
+    height: var(--toolbar-height);
+  }
+  
+  .pipeline-canvas {
+    margin: 6px;
+    border-radius: 8px;
+  }
+  
+  .header-left {
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .header-right {
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  
+  .pipeline-name-container {
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .pipeline-name-input {
+    font-size: 12px;
+    padding: 4px 6px;
+    min-width: 80px;
+    max-width: 150px;
+  }
+  
+  /* Show only the most essential header elements */
+  .status-indicator {
+    display: none;
+  }
+  
+  .header-button:not(.primary) {
+    display: none;
+  }
+  
+  .header-button.primary {
+    padding: 6px 10px;
+    font-size: 10px;
+    gap: 3px;
+  }
+  
+  .toolbar-tabs {
+    gap: 8px;
+    padding-top: 6px;
+    margin-bottom: 6px;
+  }
+  
+  .toolbar-tab {
+    font-size: 10px;
+    gap: 3px;
+    padding-bottom: 6px;
+  }
+  
+  .toolbar-content {
+    padding-bottom: 6px;
+    gap: 6px;
+    flex-direction: row;
+    overflow-x: auto;
+    min-height: auto;
+  }
+  
+  .draggable-node {
+    min-width: 90px;
+    max-width: 110px;
+    height: 34px;
+    padding: 5px 7px;
+    gap: 5px;
+    border-radius: 6px;
+  }
+  
+  .draggable-node-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+  }
+  
+  .draggable-node-label {
+    font-size: 9px;
+    font-weight: 600;
+  }
+  
+  .draggable-node-description {
+    font-size: 7px;
+    display: none; /* Hide descriptions on very small screens */
+  }
+  
+  .sophisticated-node {
+    min-width: 130px;
+    min-height: 70px;
+    padding: 7px;
+    border-radius: 8px;
+  }
+  
+  .react-flow__handle {
+    width: 7px !important;
+    height: 7px !important;
+    border-width: 1.5px !important;
+  }
+  
+  .react-flow__controls {
+    bottom: calc(var(--bottom-bar-height) + 8px) !important;
+    left: 8px !important;
+    scale: 0.7;
+  }
+  
+  .react-flow__minimap {
+    width: 100px !important;
+    height: 65px !important;
+    bottom: calc(var(--bottom-bar-height) + 8px) !important;
+    right: 8px !important;
+  }
+  
+  .top-right-controls {
+    top: 12px;
+    right: 12px;
+    scale: 0.7;
+    gap: 2px;
+    padding: 2px;
+  }
+  
+  .top-right-controls button {
+    padding: 4px;
+  }
+  
+  .floating-validate-button {
+    top: 12px;
+    right: 12px;
+    padding: 5px 8px;
+    font-size: 9px;
+    border-radius: 5px;
+    gap: 3px;
+  }
+  
+  .floating-status-bar {
+    top: 12px;
+    padding: 4px 8px;
+    gap: 6px;
+    font-size: 8px;
+    border-radius: 6px;
+    max-width: calc(100vw - 24px);
+  }
+  
+  .status-item {
+    padding: 3px 6px;
+    gap: 4px;
+    border-radius: 4px;
+  }
+  
+  /* Mobile portrait start content */
+  .start-content {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .welcome-card {
+    padding: 10px;
+    border-radius: 8px;
   }
   
   .feature-cards {
     flex-direction: column;
+    gap: 6px;
+    overflow-x: visible;
   }
   
   .feature-card {
     min-width: auto;
+    padding: 8px;
+    border-radius: 6px;
+  }
+  
+  /* Submit button container for mobile */
+  .submit-button-container {
+    padding: 8px 12px;
+    height: var(--bottom-bar-height);
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  
+  .pipeline-stats {
+    gap: 8px;
+    font-size: 9px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .stat-item {
+    padding: 4px 8px;
+    gap: 4px;
+    font-size: 8px;
+    border-radius: 4px;
+  }
+  
+  .submit-button-container button {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 11px;
+    justify-content: center;
   }
 }
 
-/* --- Performance Optimizations --- */
-.react-flow__node {
-  will-change: transform;
+/* Ultra-small screens (below 320px) */
+@media (max-width: 319px) {
+  .app-header {
+    padding: 4px 8px;
+    height: 48px;
+  }
+  
+  .toolbar-container {
+    padding: 0 8px;
+    height: 80px;
+  }
+  
+  .pipeline-canvas {
+    margin: 4px;
+    border-radius: 6px;
+  }
+  
+  .pipeline-name-input {
+    font-size: 11px;
+    padding: 3px 5px;
+    min-width: 60px;
+    max-width: 120px;
+  }
+  
+  .header-button.primary {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+  
+  .toolbar-tabs {
+    gap: 6px;
+  }
+  
+  .toolbar-tab {
+    font-size: 9px;
+  }
+  
+  .draggable-node {
+    min-width: 80px;
+    max-width: 100px;
+    height: 32px;
+    padding: 4px 6px;
+  }
+  
+  .draggable-node-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .draggable-node-label {
+    font-size: 8px;
+  }
+  
+  .sophisticated-node {
+    min-width: 120px;
+    min-height: 65px;
+    padding: 6px;
+  }
+  
+  .react-flow__controls {
+    scale: 0.6;
+  }
+  
+  .react-flow__minimap {
+    width: 80px !important;
+    height: 50px !important;
+  }
+  
+  .top-right-controls {
+    scale: 0.6;
+  }
+  
+  .floating-validate-button {
+    padding: 4px 6px;
+    font-size: 8px;
+  }
 }
 
-.react-flow__edge {
-  will-change: d;
+/* Landscape orientation adjustments for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .app-header {
+    height: 48px;
+    padding: 6px 16px;
+  }
+  
+  .toolbar-container {
+    height: 80px;
+    padding: 0 16px;
+  }
+  
+  .submit-button-container {
+    height: 60px;
+    padding: 8px 16px;
+    flex-direction: row;
+  }
+  
+  .pipeline-stats {
+    flex-direction: row;
+    gap: 12px;
+  }
+  
+  .toolbar-content {
+    max-height: 50px;
+  }
+  
+  .react-flow__controls {
+    bottom: calc(60px + 10px) !important;
+  }
+  
+  .react-flow__minimap {
+    bottom: calc(60px + 10px) !important;
+    width: 100px !important;
+    height: 65px !important;
+  }
 }
 
-/* --- Custom Scrollbars --- */
+/* High DPI / Retina displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .draggable-node-icon {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .sophisticated-node {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .status-dot {
+    animation: none;
+  }
+  
+  .react-flow__edge-path {
+    animation: none;
+    stroke-dasharray: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .app.light {
+    --border-light: #000000;
+    --text-secondary-light: #000000;
+  }
+  
+  .app.dark {
+    --border-dark: #ffffff;
+    --text-secondary-dark: #ffffff;
+  }
+  
+  .sophisticated-node {
+    border-width: 2px;
+  }
+  
+  .header-button {
+    border-width: 2px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .app-header,
+  .toolbar-container,
+  .submit-button-container,
+  .react-flow__controls,
+  .react-flow__minimap,
+  .top-right-controls,
+  .floating-validate-button,
+  .floating-status-bar {
+    display: none !important;
+  }
+  
+  .pipeline-canvas {
+    margin: 0;
+    border: 1px solid #000;
+    box-shadow: none;
+  }
+  
+  .sophisticated-node {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
+
+/* Custom Scrollbars - Responsive */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: clamp(4px, 0.8vw, 6px);
+  height: clamp(4px, 0.8vw, 6px);
 }
 
 ::-webkit-scrollbar-track {
@@ -970,16 +1515,68 @@ body {
   background: rgba(167, 139, 250, 0.5);
 }
 
-.react-flow__background {
-  opacity: 1 !important;
+/* Performance Optimizations */
+.react-flow__node {
+  will-change: transform;
 }
 
-.react-flow__background-pattern {
-  fill: var(--text-secondary-light) !important;
-  opacity: 0.3 !important;
+.react-flow__edge {
+  will-change: d;
 }
 
-.app.dark .react-flow__background-pattern {
-  fill: var(--accent-violet) !important;
-  opacity: 0.4 !important;
+.sophisticated-node {
+  contain: layout style;
+}
+
+.draggable-node {
+  contain: layout style;
+}
+
+/* Ensure proper stacking context */
+.app {
+  position: relative;
+  z-index: 0;
+}
+
+.app-header {
+  z-index: 1000;
+}
+
+.toolbar-container {
+  z-index: 999;
+}
+
+.pipeline-canvas {
+  z-index: 1;
+}
+
+.submit-button-container {
+  z-index: 1000;
+}
+
+/* Focus management for better accessibility */
+.header-button:focus,
+.toolbar-tab:focus,
+.draggable-node:focus {
+  outline: 2px solid;
+  outline-color: var(--accent-violet);
+  outline-offset: 2px;
+}
+
+.app.light .header-button:focus,
+.app.light .toolbar-tab:focus,
+.app.light .draggable-node:focus {
+  outline-color: #3b82f6;
+}
+
+/* Ensure touch targets are large enough on mobile */
+@media (max-width: 767px) {
+  .header-button,
+  .toolbar-tab,
+  .draggable-node,
+  .react-flow__controls-button,
+  .top-right-controls button {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
