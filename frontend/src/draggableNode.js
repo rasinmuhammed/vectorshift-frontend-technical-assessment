@@ -14,7 +14,7 @@ export const DraggableNode = ({ type, label, description }) => {
   };
 
   const getNodeIcon = (type) => {
-    const iconProps = { size: 4, style: { color: 'currentColor' } };
+    const iconProps = { size: 14, style: { color: 'currentColor' } }; 
     const icons = {
       'customInput': <FiLogIn {...iconProps} />,
       'customOutput': <FiLogOut {...iconProps} />,

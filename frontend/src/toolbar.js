@@ -10,10 +10,9 @@ import {
   FiGitBranch, 
   FiDatabase,
   FiMessageSquare,
-  FiBook,
-  FiRocket 
+  FiBook
 } from 'react-icons/fi';
-import {Brain} from 'lucide-react';
+import { Brain } from 'lucide-react';
 
 export const PipelineToolbar = () => {
   const [activeTab, setActiveTab] = useState('Objects');
@@ -34,40 +33,40 @@ export const PipelineToolbar = () => {
     switch(tab) {
       case 'Objects':
         return [
-          { type: 'customInput', label: 'Input', description: 'Pass data of different types into your pipeline.' },
-          { type: 'customOutput', label: 'Output', description: 'Export the results from your pipeline.' },
-          { type: 'text', label: 'Text', description: 'Add text to your pipeline with variable templating.' },
+          { type: 'customInput', label: 'Input', description: 'Data input source' },
+          { type: 'customOutput', label: 'Output', description: 'Data output destination' },
+          { type: 'text', label: 'Text', description: 'Text processing' },
         ];
       case 'AI':
         return [
-          { type: 'llm', label: 'LLM', description: 'Query large language models with your data.' },
-          { type: 'api', label: 'Google Search', description: 'Query the Google Search API for real-time data.' },
-          { type: 'transform', label: 'Transformation', description: 'Use Python code to create custom transformations.' }
+          { type: 'llm', label: 'LLM', description: 'Large language model' },
+          { type: 'api', label: 'AI API', description: 'External AI services' },
+          { type: 'transform', label: 'AI Transform', description: 'AI-powered transformation' }
         ];
       case 'Logic':
         return [
-          { type: 'conditional', label: 'Conditional', description: 'Route data based on dynamic conditions.' },
-          { type: 'filter', label: 'Filter', description: 'Filter data based on specific criteria.' }
+          { type: 'conditional', label: 'Conditional', description: 'Conditional branching' },
+          { type: 'filter', label: 'Filter', description: 'Data filtering' }
         ];
       case 'Data':
         return [
-          { type: 'database', label: 'Database', description: 'Connect to various database systems.' },
-          { type: 'transform', label: 'Transform', description: 'Transform and manipulate data structures.' }
+          { type: 'database', label: 'Database', description: 'Database operations' },
+          { type: 'transform', label: 'Transform', description: 'Data transformation' }
         ];
       case 'Integrations':
         return [
-          { type: 'api', label: 'API', description: 'Make HTTP requests to external services.' },
-          { type: 'database', label: 'Database', description: 'Perform database operations and queries.' }
+          { type: 'api', label: 'REST API', description: 'HTTP API integration' },
+          { type: 'database', label: 'SQL DB', description: 'SQL database connection' }
         ];
       case 'Knowledge':
         return [
-          { type: 'api', label: 'Google Search', description: 'Query the Google Search API for information.' },
-          { type: 'text', label: 'Knowledge Base', description: 'Access your knowledge base and documents.' }
+          { type: 'api', label: 'Search', description: 'Knowledge base search' },
+          { type: 'text', label: 'Knowledge', description: 'Knowledge processing' }
         ];
       case 'Chat':
         return [
-          { type: 'llm', label: 'Chat Model', description: 'Interactive conversational AI model.' },
-          { type: 'text', label: 'Chat Template', description: 'Structure chat conversations and responses.' }
+          { type: 'llm', label: 'Chat Bot', description: 'Conversational AI' },
+          { type: 'text', label: 'Chat Template', description: 'Chat message template' }
         ];
       default:
         return [];
@@ -77,10 +76,10 @@ export const PipelineToolbar = () => {
   const tabStyle = (isActive) => ({
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    paddingBottom: '14px',
-    fontSize: '14px',
-    fontWeight: '600',
+    gap: '6px',
+    paddingBottom: '10px',
+    fontSize: '13px',
+    fontWeight: '500',
     cursor: 'pointer',
     background: 'none',
     border: 'none',
@@ -93,60 +92,64 @@ export const PipelineToolbar = () => {
       ? (isDark ? '#6913e0' : '#3b82f6')
       : 'transparent',
     position: 'relative',
+    whiteSpace: 'nowrap',
   });
 
   const startContentStyle = {
     display: 'flex', 
-    flexDirection: 'column', 
-    gap: '20px', 
+    gap: '12px',
     maxHeight: 'none',
-    padding: '4px 0',
+    padding: '0',
+    alignItems: 'flex-start',
   };
 
   const welcomeCardStyle = {
     background: isDark 
-      ? 'linear-gradient(135deg, rgba(105, 19, 224, 0.15) 0%, rgba(124, 58, 237, 0.1) 100%)'
-      : 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%)',
-    padding: '24px', 
-    borderRadius: '12px',
-    border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.2)'}`,
+      ? 'linear-gradient(135deg, rgba(105, 19, 224, 0.12) 0%, rgba(124, 58, 237, 0.08) 100%)'
+      : 'linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.04) 100%)',
+    padding: '16px', 
+    borderRadius: '10px',
+    border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.25)' : 'rgba(59, 130, 246, 0.15)'}`,
     backdropFilter: 'blur(10px)',
     position: 'relative',
     overflow: 'hidden',
+    flex: '1',
+    minWidth: '200px',
   };
 
   const featureCardStyle = {
     background: isDark 
       ? 'rgba(31, 27, 46, 0.6)'
       : 'rgba(255, 255, 255, 0.8)',
-    padding: '16px', 
+    padding: '12px', 
     borderRadius: '8px',
-    border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.15)'}`,
+    border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.18)' : 'rgba(59, 130, 246, 0.12)'}`,
     backdropFilter: 'blur(10px)',
     transition: 'all 0.2s ease',
+    minWidth: '160px',
+    flexShrink: 0,
   };
 
   const features = [
     {
       icon: FiLayers,
-      title: 'Drag & Drop Interface',
-      description: 'Build pipelines visually by dragging components from the toolbar.'
+      title: 'Drag & Drop',
+      description: 'Visual pipeline building'
     },
     {
       icon: FiCpu,
-      title: 'AI-Powered Nodes',
-      description: 'Integrate LLMs, APIs, and smart processing components.'
+      title: 'AI Integration',
+      description: 'LLMs and smart processing'
     },
     {
       icon: FiGitBranch,
-      title: 'Logic & Control Flow',
-      description: 'Add conditional logic, filters, and data transformations.'
+      title: 'Logic Flow',
+      description: 'Conditional & data flow'
     }
   ];
 
   return (
     <div className="toolbar-container">
-      {/* Enhanced Tabs */}
       <div className="toolbar-tabs">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -167,14 +170,13 @@ export const PipelineToolbar = () => {
                 }
               }}
             >
-              <Icon size={16} />
+              <Icon size={14} />
               <span>{tab.label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Enhanced Content */}
       {getNodesForTab(activeTab).length > 0 && (
         <div className="toolbar-content">
           {getNodesForTab(activeTab).map((node, index) => (
@@ -188,7 +190,6 @@ export const PipelineToolbar = () => {
         </div>
       )}
 
-      {/* Enhanced Start Tab Content */}
       {activeTab === 'Start' && (
         <div className="toolbar-content" style={startContentStyle}>
           {/* Welcome Card */}
@@ -197,10 +198,10 @@ export const PipelineToolbar = () => {
               position: 'absolute',
               top: 0,
               right: 0,
-              width: '100px',
-              height: '100px',
+              width: '60px',
+              height: '60px',
               background: `radial-gradient(circle, ${
-                isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.1)'
+                isDark ? 'rgba(105, 19, 224, 0.15)' : 'rgba(59, 130, 246, 0.08)'
               } 0%, transparent 70%)`,
               pointerEvents: 'none',
             }} />
@@ -208,86 +209,82 @@ export const PipelineToolbar = () => {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              marginBottom: '12px',
+              gap: '10px',
+              marginBottom: '10px',
             }}>
               <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '8px',
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
                 background: `linear-gradient(135deg, ${isDark ? '#6913e0' : '#3b82f6'}, ${isDark ? '#7c3aed' : '#2563eb'})`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
               }}>
-                <FiPlay size={20} />
+                <FiPlay size={16} />
               </div>
               <div>
                 <h3 style={{ 
                   margin: 0, 
-                  fontSize: '16px', 
-                  fontWeight: '700',
+                  fontSize: '14px', 
+                  fontWeight: '600',
                   color: isDark ? '#f4f3ff' : '#0f172a',
                 }}>
                   Pipeline Builder
                 </h3>
                 <p style={{ 
-                  margin: '4px 0 0 0', 
-                  fontSize: '12px', 
+                  margin: '2px 0 0 0', 
+                  fontSize: '11px', 
                   opacity: 0.8,
                   color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
                 }}>
-                  Create powerful data processing workflows
+                  Create powerful workflows
                 </p>
               </div>
             </div>
             
             <p style={{ 
               margin: 0, 
-              fontSize: '13px', 
-              lineHeight: '1.5',
+              fontSize: '12px', 
+              lineHeight: '1.4',
               color: isDark ? 'rgba(244, 243, 255, 0.9)' : 'rgba(15, 23, 42, 0.8)',
             }}>
-              Build sophisticated data pipelines by connecting AI models, APIs, databases, and logic components. 
-              Start by dragging components from the toolbar tabs above.
+              Build sophisticated data pipelines by connecting AI models, APIs, databases, and logic components.
             </p>
           </div>
 
           {/* Feature Cards */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '12px',
-          }}>
+          <div className="feature-cards">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <div 
                   key={index} 
+                  className="feature-card"
                   style={featureCardStyle}
                   onMouseEnter={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.4)' : 'rgba(59, 130, 246, 0.3)';
+                    e.target.style.transform = 'translateY(-1px)';
+                    e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.35)' : 'rgba(59, 130, 246, 0.25)';
                     e.target.style.boxShadow = isDark 
-                      ? '0 8px 25px rgba(105, 19, 224, 0.15)'
-                      : '0 8px 25px rgba(0, 0, 0, 0.1)';
+                      ? '0 4px 12px rgba(105, 19, 224, 0.12)'
+                      : '0 4px 12px rgba(0, 0, 0, 0.08)';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.transform = 'translateY(0)';
-                    e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.15)';
+                    e.target.style.borderColor = isDark ? 'rgba(105, 19, 224, 0.18)' : 'rgba(59, 130, 246, 0.12)';
                     e.target.style.boxShadow = 'none';
                   }}
                 >
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
-                    marginBottom: '8px',
+                    gap: '6px',
+                    marginBottom: '6px',
                   }}>
                     <div style={{
-                      width: '24px',
-                      height: '24px',
+                      width: '20px',
+                      height: '20px',
                       borderRadius: '4px',
                       background: `linear-gradient(135deg, ${isDark ? '#6913e0' : '#3b82f6'}, ${isDark ? '#7c3aed' : '#2563eb'})`,
                       display: 'flex',
@@ -295,12 +292,12 @@ export const PipelineToolbar = () => {
                       justifyContent: 'center',
                       color: 'white',
                     }}>
-                      <Icon size={12} />
+                      <Icon size={10} />
                     </div>
                     <h4 style={{ 
                       margin: 0, 
-                      fontSize: '13px', 
-                      fontWeight: '600',
+                      fontSize: '12px', 
+                      fontWeight: '500',
                       color: isDark ? '#f4f3ff' : '#0f172a',
                     }}>
                       {feature.title}
@@ -308,8 +305,8 @@ export const PipelineToolbar = () => {
                   </div>
                   <p style={{ 
                     margin: 0, 
-                    fontSize: '11px', 
-                    lineHeight: '1.4',
+                    fontSize: '10px', 
+                    lineHeight: '1.3',
                     color: isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(100, 116, 139, 0.8)',
                   }}>
                     {feature.description}

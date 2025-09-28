@@ -9,10 +9,10 @@ import {
 export const useStore = create((set, get) => ({
     nodes: [],
     edges: [],
-    nodeIDs: {}, // FIX: This was missing, causing errors when creating new IDs.
-    reactFlowInstance: null, // FIX: We need to store the instance to calculate drop positions.
+    nodeIDs: {}, 
+    reactFlowInstance: null, 
 
-    // Action to set the React Flow instance once it's initialized.
+   
     setReactFlowInstance: (instance) => set({ reactFlowInstance: instance }),
 
     getNodeID: (type) => {
@@ -44,7 +44,7 @@ export const useStore = create((set, get) => ({
         edges: addEdge({
           ...connection, 
           type: 'smoothstep', 
-          animated: false, // Disabling animation for a cleaner look
+          animated: true,
           style: get().isDark 
             ? { stroke: '#64748b', strokeWidth: 2 }
             : { stroke: '#9ca3af', strokeWidth: 2 },
@@ -59,7 +59,6 @@ export const useStore = create((set, get) => ({
       set({
         nodes: get().nodes.map((node) => {
           if (node.id === nodeId) {
-            // This ensures data is properly initialized if it doesn't exist
             const data = node.data ? { ...node.data } : {};
             data[fieldName] = fieldValue;
             node.data = data;

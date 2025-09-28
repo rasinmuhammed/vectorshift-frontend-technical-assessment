@@ -77,7 +77,7 @@ export const SubmitButton = () => {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '20px 32px',
-    height: '6  0px',
+    height: '60px',
     background: isDark 
       ? `linear-gradient(180deg, 
           rgba(10, 10, 15, 0.95) 0%, 
@@ -241,7 +241,7 @@ export const SubmitButton = () => {
           </div>
         </div>
 
-        {/* Enhanced Submit Button */}
+        {/* Submit Button */}
         <button 
           type="submit"
           onClick={handleSubmit}
@@ -295,7 +295,7 @@ export const SubmitButton = () => {
             </>
           )}
           
-          {/* Premium Button Highlight Effect */}
+          {/* Button Highlight Effect */}
           {!isDisabled && (
             <div style={{
               position: 'absolute',
@@ -308,7 +308,7 @@ export const SubmitButton = () => {
             }} />
           )}
 
-          {/* Animated Gradient Overlay for Premium Feel */}
+          {/* Animated Gradient Overlay */}
           {!isDisabled && (
             <div style={{
               position: 'absolute',

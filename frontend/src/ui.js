@@ -1,6 +1,5 @@
-// Enhanced UI Component - Premium Pipeline Builder
-import React, { useRef, useCallback, useState } from 'react';
-import ReactFlow, { Controls, Background, MiniMap, useReactFlow, ReactFlowProvider } from 'reactflow';
+import { useRef, useCallback, useState } from 'react';
+import ReactFlow, { Controls, MiniMap, useReactFlow, ReactFlowProvider } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
 import { useTheme } from './App';
@@ -9,8 +8,7 @@ import {
   FiMinimize2, 
   FiZoomIn, 
   FiZoomOut, 
-  FiMove,
-  FiMessageCircle
+  FiMove
 } from 'react-icons/fi';
 
 // Node components
@@ -51,19 +49,9 @@ const selector = (state) => ({
   setReactFlowInstance: state.setReactFlowInstance,
 });
 
-// Custom Zoom Display Component
-const ZoomDisplay = ({ zoom }) => {
-  const { isDark } = useTheme();
-  return (
-    <div className="zoom-display">
-      {Math.round(zoom * 100)}%
-    </div>
-  );
-};
 
-// Enhanced Top Right Controls - This component will be rendered inside ReactFlow
+// Top Right Controls
 const TopRightControls = () => {
-  const { isDark } = useTheme();
   const { fitView, zoomIn, zoomOut } = useReactFlow();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -77,7 +65,7 @@ const TopRightControls = () => {
     }
   };
 
-  const iconProps = { size: 16 };
+  const iconProps = { size: 14 };
 
   return (
     <div className="top-right-controls">
@@ -87,7 +75,7 @@ const TopRightControls = () => {
       <button onClick={() => zoomOut()} title="Zoom Out">
         <FiZoomOut {...iconProps} />
       </button>
-      <button onClick={() => fitView({ padding: 0.2 })} title="Fit View">
+      <button onClick={() => fitView({ padding: 0.1, duration: 800 })} title="Fit View">
         <FiMove {...iconProps} />
       </button>
       <button onClick={handleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}>
@@ -97,20 +85,12 @@ const TopRightControls = () => {
   );
 };
 
-// Enhanced Chat Button
-const ChatButton = () => {
-  return (
-    <button className="chat-button" title="AI Assistant">
-      <FiMessageCircle size={24} />
-    </button>
-  );
-};
-
 // Main Flow Component - This contains the ReactFlow logic
 const PipelineFlow = () => {
   const reactFlowWrapper = useRef(null);
   const { isDark } = useTheme();
-  const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
+  // eslint-disable-next-line
+  const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 0.75 }); 
 
   const {
     nodes,
@@ -164,44 +144,54 @@ const PipelineFlow = () => {
 
   const onInit = useCallback((instance) => {
     setReactFlowInstance(instance);
+    setTimeout(() => {
+      instance.setViewport({ x: 100, y: 100, zoom: 0.75 });
+    }, 100);
   }, [setReactFlowInstance]);
 
   const onMoveEnd = useCallback((event, newViewport) => {
     setViewport(newViewport);
   }, []);
 
-  // Enhanced connection line style with theme support
   const connectionLineStyle = {
     stroke: isDark ? '#6913e0' : '#3b82f6',
-    strokeWidth: 3,
-    strokeDasharray: '8,4',
+    strokeWidth: 2,
+    strokeDasharray: '6,3', 
     filter: isDark 
-      ? 'drop-shadow(0 0 4px #6913e0) drop-shadow(0 0 2px #6913e0)'
-      : 'drop-shadow(0 0 2px #3b82f6)',
+      ? 'drop-shadow(0 0 2px #6913e0)'
+      : 'drop-shadow(0 0 1px #3b82f6)',
   };
 
-  // Enhanced default edge options with theme support
   const defaultEdgeOptions = {
     type: 'smoothstep',
     style: {
       stroke: isDark ? '#6913e0' : '#3b82f6',
-      strokeWidth: 3,
-      strokeDasharray: '8,4',
+      strokeWidth: 2, 
+      strokeDasharray: '6,3', 
       filter: isDark 
-        ? 'drop-shadow(0 0 4px #6913e0) drop-shadow(0 0 2px #6913e0)'
-        : 'drop-shadow(0 0 2px #3b82f6)',
+        ? 'drop-shadow(0 0 2px #6913e0)'
+        : 'drop-shadow(0 0 1px #3b82f6)',
     },
     markerEnd: {
       type: 'arrowclosed',
       color: isDark ? '#6913e0' : '#3b82f6',
-      width: 20,
-      height: 20,
+      width: 16, 
+      height: 16, 
     },
     animated: false,
   };
 
   return (
-    <div ref={reactFlowWrapper} style={{ width: '100%', height: '100%' }}>
+    <div 
+  ref={reactFlowWrapper} 
+  style={{ 
+    width: '100%', 
+    height: '100%',
+    backgroundImage: `radial-gradient(circle, ${isDark ? '#6913e0' : '#3b82f6'} 0.5px, transparent 0.5px)`,
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0'
+  }}
+>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -216,42 +206,39 @@ const PipelineFlow = () => {
         connectionLineStyle={connectionLineStyle}
         defaultEdgeOptions={defaultEdgeOptions}
         proOptions={{ hideAttribution: true }}
-        fitView
+        fitView={false} 
         attributionPosition="bottom-left"
-        minZoom={0.1}
-        maxZoom={4}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+        minZoom={0.2} 
+        maxZoom={2.5} 
+        defaultViewport={{ x: 100, y: 100, zoom: 0.75 }}
         snapToGrid={true}
-        snapGrid={[15, 15]}
+        snapGrid={[10, 10]} 
+        nodesDraggable={true}
+        nodesConnectable={true}
+        elementsSelectable={true}
+        selectNodesOnDrag={false}
+        panOnDrag={true}
+        panOnScroll={false}
+        panOnScrollMode="free"
+        zoomOnScroll={true}
+        zoomOnDoubleClick={false}
+        preventScrolling={true}
       >
-        {/* Enhanced Background with theme support */}
-        <Background
-          variant="dots"
-          gap={24}
-          size={1.5}
-          color={isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.2)'}
-          style={{
-            background: isDark 
-              ? 'radial-gradient(circle at 50% 50%, rgba(105, 19, 224, 0.05) 0%, transparent 50%)'
-              : 'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%)'
-          }}
-        />
 
-        {/* Enhanced Controls with custom styling */}
         <Controls
           showZoom={true}
           showFitView={true}
           showInteractive={true}
-          fitViewOptions={{ padding: 0.2 }}
+          fitViewOptions={{ padding: 0.1, duration: 800 }}
           position="bottom-left"
         />
 
-        {/* Enhanced MiniMap with theme support */}
+  
         <MiniMap
-          nodeStrokeWidth={3}
+          nodeStrokeWidth={2}
           nodeColor={isDark ? '#6913e0' : '#3b82f6'}
           nodeStrokeColor={isDark ? '#a78bfa' : '#93c5fd'}
-          nodeBorderRadius={8}
+          nodeBorderRadius={6} 
           maskColor={isDark ? 'rgba(10, 10, 15, 0.6)' : 'rgba(248, 250, 252, 0.6)'}
           maskStrokeColor={isDark ? '#2d1b69' : '#e2e8f0'}
           maskStrokeWidth={1}
@@ -259,28 +246,22 @@ const PipelineFlow = () => {
           zoomable
           pannable
           style={{
-            width: 200,
-            height: 150,
+            width: 180, 
+            height: 120,
           }}
         />
 
-        {/* Components that need ReactFlow context */}
         <TopRightControls />
       </ReactFlow>
 
-      {/* Components outside ReactFlow context */}
-      <ZoomDisplay zoom={viewport.zoom} />
-      <ChatButton />
-      
-      {/* Subtle corner decorations for premium feel */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100px',
-        height: '100px',
+        width: '80px', 
+        height: '80px', 
         background: `radial-gradient(circle at top left, ${
-          isDark ? 'rgba(105, 19, 224, 0.1)' : 'rgba(59, 130, 246, 0.05)'
+          isDark ? 'rgba(105, 19, 224, 0.08)' : 'rgba(59, 130, 246, 0.04)'
         } 0%, transparent 70%)`,
         pointerEvents: 'none',
       }} />
@@ -289,10 +270,10 @@ const PipelineFlow = () => {
         position: 'absolute',
         bottom: 0,
         right: 0,
-        width: '100px',
-        height: '100px',
+        width: '80px', 
+        height: '80px', 
         background: `radial-gradient(circle at bottom right, ${
-          isDark ? 'rgba(105, 19, 224, 0.1)' : 'rgba(59, 130, 246, 0.05)'
+          isDark ? 'rgba(105, 19, 224, 0.08)' : 'rgba(59, 130, 246, 0.04)'
         } 0%, transparent 70%)`,
         pointerEvents: 'none',
       }} />
@@ -300,7 +281,6 @@ const PipelineFlow = () => {
   );
 };
 
-// Main PipelineUI component wrapped with ReactFlowProvider
 export const PipelineUI = () => {
   return (
     <ReactFlowProvider>

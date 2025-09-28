@@ -1,4 +1,3 @@
-// Enhanced App Component - Premium Pipeline Builder
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PipelineToolbar } from './toolbar';
 import { PipelineUI } from './ui';
@@ -12,10 +11,10 @@ import {
   FiUploadCloud,
   FiEye,
   FiClock,
-  FiActivity
+  FiActivity,
+  FiEdit3
 } from 'react-icons/fi';
 
-// Enhanced Theme Context
 const ThemeContext = createContext();
 
 export const useTheme = () => {
@@ -29,16 +28,22 @@ export const useTheme = () => {
 function App() {
   const [isDark, setIsDark] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [pipelineName, setPipelineName] = useState('Untitled Pipeline');
+  const [isEditingName, setIsEditingName] = useState(false);
 
-  // Initialize theme from localStorage or system preference
   useEffect(() => {
     const savedTheme = localStorage.getItem('pipeline-theme');
+    const savedName = localStorage.getItem('pipeline-name');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     if (savedTheme) {
       setIsDark(savedTheme === 'dark');
     } else {
       setIsDark(systemPrefersDark);
+    }
+    
+    if (savedName) {
+      setPipelineName(savedName);
     }
     
     setIsLoading(false);
@@ -50,8 +55,24 @@ function App() {
     localStorage.setItem('pipeline-theme', newTheme ? 'dark' : 'light');
   };
 
-  // Enhanced icon props for consistent styling
-  const iconProps = { size: 14, style: { marginRight: '6px' } };
+  const handleNameChange = (e) => {
+    setPipelineName(e.target.value);
+  };
+
+  const handleNameSubmit = (e) => {
+    if (e.key === 'Enter' || e.type === 'blur') {
+      setIsEditingName(false);
+      const finalName = pipelineName.trim() || 'Untitled Pipeline';
+      setPipelineName(finalName);
+      localStorage.setItem('pipeline-name', finalName);
+    }
+  };
+
+  const handleNameEdit = () => {
+    setIsEditingName(true);
+  };
+
+  const iconProps = { size: 12, style: { marginRight: '4px' } };
 
   // Loading screen for theme initialization
   if (isLoading) {
@@ -88,24 +109,71 @@ function App() {
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       <div className={`app ${isDark ? 'dark' : 'light'}`}>
-        {/* Enhanced Header */}
+     
         <div className="app-header">
           <div className="header-left">
-            <div className="breadcrumb">
-              <span>Pipelines</span>
+            <div className="pipeline-name-container">
+              <span style={{
+                fontSize: '13px',
+                fontWeight: '500',
+                color: isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)',
+              }}>
+                Pipelines
+              </span>
               <span className="breadcrumb-separator">/</span>
-              <span>Untitled Pipeline</span>
+              
+              {isEditingName ? (
+                <input
+                  type="text"
+                  value={pipelineName}
+                  onChange={handleNameChange}
+                  onBlur={handleNameSubmit}
+                  onKeyDown={handleNameSubmit}
+                  className="pipeline-name-input"
+                  autoFocus
+                  style={{
+                    fontSize: '15px',
+                    fontWeight: '600',
+                  }}
+                />
+              ) : (
+                <div
+                  onClick={handleNameEdit}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    padding: '6px 10px',
+                    borderRadius: '6px',
+                    transition: 'all 0.2s ease',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    color: isDark ? '#f4f3ff' : '#0f172a',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = isDark ? 'rgba(31, 27, 46, 0.6)' : 'rgba(248, 250, 252, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'transparent';
+                  }}
+                >
+                  <span>{pipelineName}</span>
+                  <FiEdit3 size={12} style={{ 
+                    opacity: 0.6,
+                    transition: 'opacity 0.2s ease'
+                  }} />
+                </div>
+              )}
             </div>
           </div>
           
           <div className="header-right">
-            {/* Enhanced Status Indicator */}
             <div className="status-indicator">
               <div className="status-dot"></div>
               <span>Draft saved</span>
             </div>
             
-            {/* Theme Toggle with Enhanced Styling */}
             <button 
               className="header-button secondary" 
               onClick={toggleTheme}
@@ -118,7 +186,6 @@ function App() {
               )}
             </button>
             
-            {/* Enhanced Action Buttons */}
             <button className="header-button secondary" title="View Pipeline Traces">
               <FiEye {...iconProps} />
               View Traces
@@ -161,19 +228,15 @@ function App() {
             </button>
           </div>
         </div>
-
-        {/* Enhanced Toolbar */}
-        <PipelineToolbar />
         
-        {/* Main Pipeline Canvas */}
+        <PipelineToolbar />
+
         <div className="pipeline-canvas">
           <PipelineUI />
         </div>
-        
-        {/* Enhanced Submit Component */}
+       
         <SubmitButton />
 
-        {/* Global Styles for Enhanced Effects */}
         <style jsx global>{`
           /* Shimmer animation for premium buttons */
           @keyframes shimmer {
@@ -191,13 +254,14 @@ function App() {
           /* Dash flow animation for connection lines */
           @keyframes dash-flow {
             to {
-              stroke-dashoffset: -12;
+              stroke-dashoffset: -9;
             }
           }
 
           /* Smooth scrollbar styles */
           ::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
           }
           
           ::-webkit-scrollbar-track {
@@ -256,6 +320,15 @@ function App() {
           ::-moz-selection {
             background: ${isDark ? 'rgba(105, 19, 224, 0.3)' : 'rgba(59, 130, 246, 0.3)'};
             color: ${isDark ? '#f4f3ff' : '#0f172a'};
+          }
+
+          /* Performance optimizations */
+          .react-flow__node {
+            will-change: transform;
+          }
+
+          .react-flow__edge {
+            will-change: d;
           }
         `}</style>
       </div>
