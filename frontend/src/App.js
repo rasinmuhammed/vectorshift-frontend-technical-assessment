@@ -242,8 +242,7 @@ function App() {
     return (
       <div style={{
         width: '100vw',
-        height: '100vh',
-        height: '100dvh', // Dynamic viewport height for mobile
+        height: '100dvh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

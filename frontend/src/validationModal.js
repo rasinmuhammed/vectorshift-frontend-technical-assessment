@@ -1,6 +1,6 @@
 // Enhanced Responsive Validation Modal
 import React, { useEffect } from 'react';
-import { FiX, FiCheck, FiAlertCircle, FiActivity, FiLoader } from 'react-icons/fi';
+import { FiX, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi';
 
 const ValidationModal = ({ 
   isOpen, 

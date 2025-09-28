@@ -513,7 +513,7 @@ export const PipelineToolbar = () => {
               display: 'flex',
               alignItems: 'center',
               gap: isMobile ? '8px' : '10px',
-              marginBottom: isMobile ? '8px' : '10px',
+              marginBottom: isMobile ? '8px' : '0px',
             }}>
               <div style={{
                 width: isMobile ? '28px' : '32px',
@@ -546,15 +546,6 @@ export const PipelineToolbar = () => {
                 </p>
               </div>
             </div>
-            
-            <p style={{ 
-              margin: 0, 
-              fontSize: isMobile ? '10px' : '12px',
-              lineHeight: '1.4',
-              color: isDark ? 'rgba(244, 243, 255, 0.9)' : 'rgba(15, 23, 42, 0.8)',
-            }}>
-              Build sophisticated data pipelines by connecting AI models, APIs, databases, and logic components.
-            </p>
           </div>
 
           {/* Feature Cards */}

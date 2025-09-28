@@ -217,32 +217,42 @@ const PipelineFlow = () => {
     }
   }, [handleTouchDrop]);
 
+  // Enhanced connection line style with proper illumination
   const connectionLineStyle = {
-    stroke: isDark ? '#6913e0' : '#3b82f6',
-    strokeWidth: 2,
-    strokeDasharray: '6,3',
+    stroke: isDark ? '#a78bfa' : '#60a5fa',
+    strokeWidth: 3,
+    strokeDasharray: '8,4',
     filter: isDark 
-      ? 'drop-shadow(0 0 2px #6913e0)'
-      : 'drop-shadow(0 0 1px #3b82f6)',
+      ? 'drop-shadow(0 0 6px #a78bfa) drop-shadow(0 0 12px rgba(167, 139, 250, 0.4))'
+      : 'drop-shadow(0 0 4px #60a5fa) drop-shadow(0 0 8px rgba(96, 165, 250, 0.3))',
+    animation: 'dashFlow 1.5s linear infinite',
   };
 
+  // Enhanced default edge options with better styling
   const defaultEdgeOptions = {
     type: 'smoothstep',
     style: {
-      stroke: isDark ? '#6913e0' : '#3b82f6',
-      strokeWidth: 2,
-      strokeDasharray: '6,3',
+      stroke: isDark ? '#a78bfa' : '#60a5fa',
+      strokeWidth: 3,
+      strokeDasharray: '8,4',
       filter: isDark 
-        ? 'drop-shadow(0 0 2px #6913e0)'
-        : 'drop-shadow(0 0 1px #3b82f6)',
+        ? 'drop-shadow(0 0 6px #a78bfa) drop-shadow(0 0 12px rgba(167, 139, 250, 0.4))'
+        : 'drop-shadow(0 0 4px #60a5fa) drop-shadow(0 0 8px rgba(96, 165, 250, 0.3))',
+      animation: 'dashFlow 1.5s linear infinite',
     },
     markerEnd: {
       type: 'arrowclosed',
-      color: isDark ? '#6913e0' : '#3b82f6',
-      width: 16,
-      height: 16,
+      color: isDark ? '#a78bfa' : '#60a5fa',
+
     },
-    animated: false,
+    animated: true, // Enable built-in animation
+  };
+
+  // Enhanced edge styles with proper theme colors
+  const edgeTypes = {
+    default: {
+      ...defaultEdgeOptions,
+    }
   };
 
   return (
@@ -252,12 +262,16 @@ const PipelineFlow = () => {
       style={{ 
         width: '100%', 
         height: '100%',
-        backgroundImage: `radial-gradient(circle, ${isDark ? '#6913e0' : '#3b82f6'} 0.5px, transparent 0.5px)`,
+        backgroundImage: `radial-gradient(circle, ${isDark ? '#a78bfa' : '#60a5fa'} 0.5px, transparent 0.5px)`,
         backgroundSize: isMobile ? '15px 15px' : '20px 20px',
         backgroundPosition: '0 0'
       }}
     >
       <ReactFlow
+        style={{
+          width: '100%',
+          height: '100%'
+        }}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -292,7 +306,6 @@ const PipelineFlow = () => {
         zoomOnScroll={true}
         zoomOnDoubleClick={false}
         preventScrolling={true}
-        // Enhanced touch support
         panOnScrollSpeed={0.5}
         zoomOnPinch={true}
       >
@@ -302,12 +315,20 @@ const PipelineFlow = () => {
           showInteractive={true}
           fitViewOptions={{ padding: 0.1, duration: 800 }}
           position="bottom-left"
+          style={{
+            background: isDark 
+              ? 'rgba(31, 27, 46, 0.9)' 
+              : 'rgba(255, 255, 255, 0.9)',
+            border: `1px solid ${isDark ? '#2d1b69' : '#e2e8f0'}`,
+            borderRadius: '10px',
+            backdropFilter: 'blur(20px)',
+          }}
         />
 
         <MiniMap
           nodeStrokeWidth={2}
-          nodeColor={isDark ? '#6913e0' : '#3b82f6'}
-          nodeStrokeColor={isDark ? '#a78bfa' : '#93c5fd'}
+          nodeColor={isDark ? '#a78bfa' : '#60a5fa'}
+          nodeStrokeColor={isDark ? '#c4b5fd' : '#93c5fd'}
           nodeBorderRadius={6}
           maskColor={isDark ? 'rgba(10, 10, 15, 0.6)' : 'rgba(248, 250, 252, 0.6)'}
           maskStrokeColor={isDark ? '#2d1b69' : '#e2e8f0'}
@@ -318,6 +339,12 @@ const PipelineFlow = () => {
           style={{
             width: isMobile ? 120 : 180,
             height: isMobile ? 80 : 120,
+            background: isDark 
+              ? 'rgba(31, 27, 46, 0.9)' 
+              : 'rgba(255, 255, 255, 0.9)',
+            border: `1px solid ${isDark ? '#2d1b69' : '#e2e8f0'}`,
+            borderRadius: '10px',
+            backdropFilter: 'blur(20px)',
           }}
         />
 
@@ -329,10 +356,10 @@ const PipelineFlow = () => {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: isMobile ? '60px' : '80px',
-        height: isMobile ? '60px' : '80px',
+        width: isMobile ? '60px' : '100%',
+        height: isMobile ? '60px' : '100%',
         background: `radial-gradient(circle at top left, ${
-          isDark ? 'rgba(105, 19, 224, 0.08)' : 'rgba(59, 130, 246, 0.04)'
+          isDark ? 'rgba(167, 139, 250, 0.08)' : 'rgba(96, 165, 250, 0.04)'
         } 0%, transparent 70%)`,
         pointerEvents: 'none',
       }} />
@@ -344,10 +371,108 @@ const PipelineFlow = () => {
         width: isMobile ? '60px' : '80px',
         height: isMobile ? '60px' : '80px',
         background: `radial-gradient(circle at bottom right, ${
-          isDark ? 'rgba(105, 19, 224, 0.08)' : 'rgba(59, 130, 246, 0.04)'
+          isDark ? 'rgba(167, 139, 250, 0.08)' : 'rgba(96, 165, 250, 0.04)'
         } 0%, transparent 70%)`,
         pointerEvents: 'none',
       }} />
+
+      {/*  CSS for better edge animations */}
+      <style jsx>{`
+        @keyframes dashFlow {
+          0% {
+            stroke-dashoffset: 0;
+          }
+          100% {
+            stroke-dashoffset: -12;
+          }
+        }
+
+        /* Override ReactFlow edge styles */
+        .react-flow__edge-path {
+          stroke: ${isDark ? '#a78bfa' : '#60a5fa'} !important;
+          stroke-width: 3 !important;
+          stroke-dasharray: 8,4 !important;
+          filter: ${isDark 
+            ? 'drop-shadow(0 0 6px #a78bfa) drop-shadow(0 0 12px rgba(167, 139, 250, 0.4)) !important'
+            : 'drop-shadow(0 0 4px #60a5fa) drop-shadow(0 0 8px rgba(96, 165, 250, 0.3)) !important'};
+          animation: dashFlow 1.5s linear infinite !important;
+        }
+
+    
+        .react-flow__edge:hover .react-flow__edge-path {
+          stroke-width: 4 !important;
+          filter: ${isDark 
+            ? 'drop-shadow(0 0 8px #a78bfa) drop-shadow(0 0 16px rgba(167, 139, 250, 0.6)) !important'
+            : 'drop-shadow(0 0 6px #60a5fa) drop-shadow(0 0 12px rgba(96, 165, 250, 0.5)) !important'};
+        }
+
+        /* Connection line styling */
+        .react-flow__connectionline {
+          stroke: ${isDark ? '#a78bfa' : '#60a5fa'} !important;
+          stroke-width: 3 !important;
+          stroke-dasharray: 8,4 !important;
+          filter: ${isDark 
+            ? 'drop-shadow(0 0 6px #a78bfa) drop-shadow(0 0 12px rgba(167, 139, 250, 0.4)) !important'
+            : 'drop-shadow(0 0 4px #60a5fa) drop-shadow(0 0 8px rgba(96, 165, 250, 0.3)) !important'};
+          animation: dashFlow 1.5s linear infinite !important;
+        }
+
+        /* Enhanced edge markers */
+        .react-flow__arrowhead {
+          fill: ${isDark ? '#a78bfa' : '#60a5fa'} !important;
+          filter: ${isDark 
+            ? 'drop-shadow(0 0 4px #a78bfa) !important'
+            : 'drop-shadow(0 0 2px #60a5fa) !important'};
+        }
+
+        /* Node handle glow effects */
+        .react-flow__handle {
+          background: ${isDark ? '#1f1b2e' : '#ffffff'} !important;
+          border: 2px solid ${isDark ? '#a78bfa' : '#60a5fa'} !important;
+          box-shadow: 0 0 8px ${isDark ? 'rgba(167, 139, 250, 0.5)' : 'rgba(96, 165, 250, 0.4)'} !important;
+          transition: all 0.2s ease !important;
+        }
+
+        .react-flow__handle:hover {
+          transform: scale(1.2) !important;
+          box-shadow: 0 0 12px ${isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(96, 165, 250, 0.6)'} !important;
+        }
+
+        .react-flow__handle.connecting {
+          background: ${isDark ? '#a78bfa' : '#60a5fa'} !important;
+          box-shadow: 0 0 16px ${isDark ? 'rgba(167, 139, 250, 0.8)' : 'rgba(96, 165, 250, 0.7)'} !important;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 767px) {
+          .react-flow__edge-path {
+            stroke-width: 2 !important;
+            stroke-dasharray: 6,3 !important;
+          }
+          
+          .react-flow__edge:hover .react-flow__edge-path {
+            stroke-width: 3 !important;
+          }
+          
+          .react-flow__handle {
+            width: 12px !important;
+            height: 12px !important;
+          }
+        }
+
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+          .react-flow__edge-path {
+            stroke-width: 4 !important;
+            filter: none !important;
+          }
+          
+          .react-flow__handle {
+            border-width: 3px !important;
+            box-shadow: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

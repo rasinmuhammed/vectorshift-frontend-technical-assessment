@@ -34,7 +34,7 @@
   --controls-bg-dark: rgba(20, 19, 34, 0.9);
   
   /* Responsive Layout Variables */
-  --pipeline-margin: 16px;
+  --pipeline-margin: 0px;
   --pipeline-border-radius: 12px;
   --toolbar-height: 110px;
   --header-height: 64px;
@@ -463,7 +463,7 @@ body {
 .pipeline-canvas {
   flex: 1;
   position: relative;
-  margin: var(--pipeline-margin);
+  /* margin: var(--pipeline-margin); */
   border-radius: var(--pipeline-border-radius);
   overflow: hidden;
   border: 1px solid;
@@ -531,8 +531,8 @@ body {
 /* --- React Flow Controls - Fixed Z-index --- */
 .react-flow__controls {
   position: absolute !important;
-  bottom: 20px !important;
-  left: 20px !important;
+  bottom: 50px !important;
+  left: 10px !important;
   border-radius: 10px;
   overflow: hidden;
   backdrop-filter: blur(20px);
@@ -543,7 +543,7 @@ body {
 
 .react-flow__minimap {
   position: absolute !important;
-  bottom: 20px !important;
+  bottom: 40px !important;
   right: 20px !important;
   border-radius: 10px;
   overflow: hidden;
@@ -556,8 +556,8 @@ body {
 
 .top-right-controls {
   position: absolute;
-  top: 20px;
-  right: 160px;
+  top: 10px;
+  right: 100px;
   display: flex;
   gap: 4px;
   border-radius: 10px;
@@ -626,9 +626,6 @@ body {
     padding: 0 20px;
   }
   
-  .pipeline-canvas {
-    margin: 12px;
-  }
   
   .draggable-node {
     min-width: 110px;
@@ -722,4 +719,279 @@ body {
   outline: 2px solid var(--accent-violet) !important;
   outline-offset: 2px !important;
   border-radius: 4px !important;
+}
+
+/* Modal and UI Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmerEffect {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+/* Node Control Button Hover Effects */
+.node-control-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.node-control-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.3s ease;
+}
+
+.node-control-button:hover::before {
+  left: 100%;
+}
+
+/* Enhanced Node Transitions */
+.sophisticated-node {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sophisticated-node.collapsed {
+  transform: scale(0.95);
+}
+
+.sophisticated-node.expanded {
+  transform: scale(1);
+}
+
+/* Settings Modal Styles */
+.settings-modal {
+  animation: slideInUp 0.2s ease-out;
+}
+
+.settings-modal::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--bg-secondary-dark);
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Delete Confirmation Modal */
+.delete-modal {
+  animation: scaleIn 0.2s ease-out;
+}
+
+.delete-modal-backdrop {
+  animation: fadeInScale 0.2s ease-out;
+}
+
+/* Pulse effect for danger buttons */
+@keyframes dangerPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.delete-button:hover {
+  animation: dangerPulse 1.5s infinite;
+}
+
+/* Improved node handle animations */
+.react-flow__handle {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.2) !important;
+  filter: brightness(1.1) !important;
+}
+
+/* Node collapse/expand animation */
+@keyframes nodeCollapse {
+  from {
+    max-height: 200px;
+    opacity: 1;
+  }
+  to {
+    max-height: 50px;
+    opacity: 0.8;
+  }
+}
+
+@keyframes nodeExpand {
+  from {
+    max-height: 50px;
+    opacity: 0.8;
+  }
+  to {
+    max-height: 200px;
+    opacity: 1;
+  }
+}
+
+.node-collapsing {
+  animation: nodeCollapse 0.3s ease-out forwards;
+}
+
+.node-expanding {
+  animation: nodeExpand 0.3s ease-out forwards;
+}
+
+/* Settings field focus animations */
+.settings-field:focus {
+  animation: fieldFocusGlow 0.3s ease-out;
+}
+
+@keyframes fieldFocusGlow {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Button loading state */
+.button-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.button-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Tooltip animations */
+.node-tooltip {
+  animation: tooltipSlideIn 0.2s ease-out;
+}
+
+@keyframes tooltipSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments for animations */
+@media (max-width: 767px) {
+  .settings-modal {
+    animation: slideInUp 0.15s ease-out;
+  }
+  
+  .delete-modal {
+    animation: scaleIn 0.15s ease-out;
+  }
+  
+  /* Reduce animation duration on mobile for better performance */
+  .sophisticated-node,
+  .node-control-button,
+  .react-flow__handle {
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .node-control-button:hover::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .sophisticated-node,
+  .settings-modal,
+  .delete-modal,
+  .node-control-button,
+  .react-flow__handle {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .node-control-button::before {
+    display: none;
+  }
 }

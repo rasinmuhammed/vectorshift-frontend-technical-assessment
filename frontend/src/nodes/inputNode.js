@@ -1,7 +1,8 @@
+// frontend/src/nodes/inputNode.js - Enhanced version
 import { BaseNode } from './BaseNode.js';
 import { useStore } from '../store';
 
-// Input Node
+// Input Node with enhanced features
 export const InputNode = ({ id, data }) => {
   const updateNodeField = useStore((state) => state.updateNodeField);
 
@@ -10,30 +11,51 @@ export const InputNode = ({ id, data }) => {
     title: 'Input',
     description: 'Data input source',
     width: 200,
-    height: 120,
+    height: 140, // Slightly increased height to accommodate more fields
     fields: [
       {
         name: 'inputName',
-        label: 'Name',
+        label: 'Input Name',
         type: 'text',
         default: id.replace('customInput-', 'input_'),
         placeholder: 'Enter input name'
       },
       {
         name: 'inputType',
-        label: 'Type',
+        label: 'Data Type',
         type: 'select',
         default: 'Text',
         options: [
           { value: 'Text', label: 'Text' },
           { value: 'File', label: 'File' },
           { value: 'Number', label: 'Number' },
-          { value: 'Boolean', label: 'Boolean' }
+          { value: 'Boolean', label: 'Boolean' },
+          { value: 'Array', label: 'Array' },
+          { value: 'Object', label: 'Object' }
+        ]
+      },
+      {
+        name: 'defaultValue',
+        label: 'Default Value',
+        type: 'textarea',
+        default: '',
+        placeholder: 'Enter default value (optional)'
+      },
+      {
+        name: 'required',
+        label: 'Required',
+        type: 'select',
+        default: 'false',
+        options: [
+          { value: 'false', label: 'No' },
+          { value: 'true', label: 'Yes' }
         ]
       }
     ],
+    inputs: [], // Input nodes typically don't have inputs
     outputs: [
-      { id: 'value', label: 'Value' }
+      { id: 'value', label: 'Value' },
+      { id: 'metadata', label: 'Metadata' }
     ]
   };
 
