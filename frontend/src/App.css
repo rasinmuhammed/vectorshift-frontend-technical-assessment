@@ -1,4 +1,4 @@
-/* Enhanced App.css - Fully Responsive Pipeline Builder */
+/* Fixed App.css - Responsive Pipeline Builder with Proper Z-indexing */
 
 /* --- Base & Theme Variables --- */
 :root {
@@ -40,11 +40,17 @@
   --header-height: 64px;
   --bottom-bar-height: 80px;
 
-  /* Breakpoints */
-  --mobile-breakpoint: 768px;
-  --tablet-breakpoint: 1024px;
-  --desktop-breakpoint: 1200px;
-  --large-desktop-breakpoint: 1440px;
+  /* Z-index System */
+  --z-background: 0;
+  --z-canvas: 1;
+  --z-nodes: 2;
+  --z-edges: 3;
+  --z-controls: 100;
+  --z-minimap: 101;
+  --z-floating: 200;
+  --z-toolbar: 998;
+  --z-header: 999;
+  --z-modal: 1000;
 }
 
 /* Desktop First - Large screens (1440px+) */
@@ -54,26 +60,6 @@
     --toolbar-height: 120px;
     --header-height: 72px;
     --bottom-bar-height: 90px;
-  }
-}
-
-/* Standard Desktop (1200px - 1439px) */
-@media (max-width: 1439px) and (min-width: 1200px) {
-  :root {
-    --pipeline-margin: 20px;
-    --toolbar-height: 115px;
-    --header-height: 68px;
-    --bottom-bar-height: 85px;
-  }
-}
-
-/* Small Desktop/Tablet Landscape (1024px - 1199px) */
-@media (max-width: 1199px) and (min-width: 1024px) {
-  :root {
-    --pipeline-margin: 16px;
-    --toolbar-height: 110px;
-    --header-height: 64px;
-    --bottom-bar-height: 80px;
   }
 }
 
@@ -117,14 +103,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg-primary-light);
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
 }
 
 /* --- Main App Container --- */
 .app {
   width: 100vw;
   height: 100vh;
-  height: 100dvh; /* Dynamic viewport height for mobile */
+  height: 100dvh;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -142,7 +128,7 @@ body {
   color: var(--text-primary-dark);
 }
 
-/* --- Header - Fully Responsive --- */
+/* --- Header - Fixed Z-index --- */
 .app-header {
   display: flex;
   align-items: center;
@@ -154,17 +140,17 @@ body {
   border-bottom: 1px solid;
   backdrop-filter: blur(20px);
   position: relative;
-  z-index: 1000;
-  overflow: hidden;
+  z-index: var(--z-header);
+  overflow: visible; /* Changed from hidden */
 }
 
 .app.light .app-header {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.95); /* Increased opacity */
   border-color: var(--border-light);
 }
 
 .app.dark .app-header {
-  background: rgba(20, 19, 34, 0.85);
+  background: rgba(20, 19, 34, 0.95); /* Increased opacity */
   border-color: var(--border-dark);
 }
 
@@ -174,6 +160,13 @@ body {
   gap: 16px;
   flex: 1;
   min-width: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 /* Responsive Pipeline Name */
@@ -206,36 +199,12 @@ body {
   color: var(--text-primary-dark);
 }
 
-.pipeline-name-input:hover,
-.pipeline-name-input:focus {
-  outline: none;
-}
-
-.app.light .pipeline-name-input:hover,
-.app.light .pipeline-name-input:focus {
-  border-color: var(--border-light);
-  background: rgba(248, 250, 252, 0.8);
-}
-
-.app.dark .pipeline-name-input:hover,
-.app.dark .pipeline-name-input:focus {
-  border-color: var(--border-dark);
-  background: rgba(31, 27, 46, 0.8);
-}
-
 .breadcrumb-separator {
   font-size: clamp(12px, 1.8vw, 14px);
   font-weight: 400;
 }
 .app.light .breadcrumb-separator { color: var(--text-secondary-light); }
 .app.dark .breadcrumb-separator { color: var(--text-secondary-dark); }
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
 
 .status-indicator {
   display: flex;
@@ -312,20 +281,8 @@ body {
   border: none;
   color: white;
 }
-.app.light .header-button.primary {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-}
-.app.light .header-button.primary:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-}
-.app.dark .header-button.primary {
-  background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-hover));
-}
-.app.dark .header-button.primary:hover {
-  background: linear-gradient(135deg, var(--accent-violet-hover), #8b5cf6);
-}
 
-/* --- Toolbar - Fully Responsive --- */
+/* --- Toolbar - Fixed Z-index and Positioning --- */
 .toolbar-container {
   padding: 0 24px;
   border-bottom: 1px solid;
@@ -336,16 +293,16 @@ body {
   flex-direction: column;
   backdrop-filter: blur(20px);
   position: relative;
-  z-index: 999;
-  overflow: hidden;
+  z-index: var(--z-toolbar);
+  overflow: visible; /* Changed from hidden */
 }
 
 .app.light .toolbar-container {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.95); /* Increased opacity */
   border-color: var(--border-light);
 }
 .app.dark .toolbar-container {
-  background: rgba(20, 19, 34, 0.85);
+  background: rgba(20, 19, 34, 0.95); /* Increased opacity */
   border-color: var(--border-dark);
 }
 
@@ -400,23 +357,11 @@ body {
   flex: 1;
   align-items: flex-start;
   scrollbar-width: thin;
+  position: relative;
+  z-index: inherit; /* Inherit from parent */
 }
 
-.toolbar-content::-webkit-scrollbar {
-  height: 4px;
-}
-.toolbar-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-.toolbar-content::-webkit-scrollbar-thumb {
-  background: var(--text-secondary-light);
-  border-radius: 2px;
-}
-.app.dark .toolbar-content::-webkit-scrollbar-thumb {
-  background: var(--text-secondary-dark);
-}
-
-/* --- Draggable Node - Fully Responsive --- */
+/* --- Draggable Node - Fixed for Touch and Drag --- */
 .draggable-node {
   border: 1px solid;
   border-radius: 8px;
@@ -433,14 +378,17 @@ body {
   min-width: 120px;
   max-width: 180px;
   flex-shrink: 0;
+  user-select: none; /* Prevent text selection during drag */
+  -webkit-user-drag: element; /* Enable dragging */
+  touch-action: none; /* Prevent touch scrolling during drag */
 }
 
 .app.light .draggable-node {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95); /* Increased opacity */
   border-color: var(--border-light);
 }
 .app.dark .draggable-node {
-  background: rgba(31, 27, 46, 0.9);
+  background: rgba(31, 27, 46, 0.95); /* Increased opacity */
   border-color: var(--border-dark);
 }
 
@@ -471,7 +419,7 @@ body {
   overflow: hidden;
 }
 
-/* Node Type Colors - More Vibrant */
+/* Node Type Colors */
 .node-type--customInput { background: linear-gradient(135deg, #3b82f6, #2563eb); }
 .node-type--customOutput { background: linear-gradient(135deg, #10b981, #059669); }
 .node-type--text { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
@@ -487,6 +435,7 @@ body {
   flex: 1;
   min-width: 0;
   overflow: hidden;
+  pointer-events: none; /* Prevent interference with drag */
 }
 .draggable-node-label { 
   font-size: clamp(10px, 1.5vw, 12px);
@@ -510,7 +459,7 @@ body {
 .app.light .draggable-node-description { color: var(--text-secondary-light); }
 .app.dark .draggable-node-description { color: var(--text-secondary-dark); }
 
-/* --- Pipeline Canvas Container - Fully Responsive --- */
+/* --- Pipeline Canvas Container - Fixed Z-index --- */
 .pipeline-canvas {
   flex: 1;
   position: relative;
@@ -519,7 +468,8 @@ body {
   overflow: hidden;
   border: 1px solid;
   backdrop-filter: blur(20px);
-  min-height: 0; /* Allow flex shrinking */
+  min-height: 0;
+  z-index: var(--z-canvas);
 }
 
 .app.light .pipeline-canvas {
@@ -533,7 +483,7 @@ body {
   box-shadow: 0 4px 20px rgba(105, 19, 224, 0.06);
 }
 
-/* --- Enhanced Node Styles - Fully Responsive --- */
+/* --- Enhanced Node Styles --- */
 .sophisticated-node {
   min-width: clamp(140px, 20vw, 180px);
   min-height: clamp(70px, 10vh, 100px);
@@ -546,6 +496,7 @@ body {
   backdrop-filter: blur(10px);
   border: 1px solid;
   overflow: hidden;
+  z-index: var(--z-nodes);
 }
 
 .app.light .sophisticated-node {
@@ -559,20 +510,13 @@ body {
   box-shadow: var(--node-shadow-dark);
 }
 
-.sophisticated-node:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
-}
-.app.dark .sophisticated-node:hover {
-  box-shadow: 0 6px 20px rgba(105, 19, 224, 0.2) !important;
-}
-
-/* --- React Flow Handle Styles - Responsive --- */
+/* --- React Flow Handle Styles --- */
 .react-flow__handle {
   width: clamp(8px, 1.2vw, 10px) !important;
   height: clamp(8px, 1.2vw, 10px) !important;
   border: 2px solid !important;
   transition: all 0.2s ease !important;
+  z-index: var(--z-nodes) !important;
 }
 
 .app.light .react-flow__handle {
@@ -584,37 +528,47 @@ body {
   border-color: var(--accent-violet) !important;
 }
 
-.react-flow__handle:hover {
-  transform: scale(1.15) !important;
-}
-.app.light .react-flow__handle:hover {
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
-}
-.app.dark .react-flow__handle:hover {
-  border-color: var(--accent-violet) !important;
-  box-shadow: 0 0 0 3px rgba(105, 19, 224, 0.2) !important;
-}
-
-/* --- Floating Elements - Responsive --- */
-.floating-status-bar {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
+/* --- React Flow Controls - Fixed Z-index --- */
+.react-flow__controls {
+  position: absolute !important;
+  bottom: 20px !important;
+  left: 20px !important;
   border-radius: 10px;
+  overflow: hidden;
   backdrop-filter: blur(20px);
   border: 1px solid;
-  z-index: 200;
-  font-size: clamp(9px, 1.3vw, 11px);
-  font-weight: 500;
-  max-width: calc(100vw - 40px);
+  z-index: var(--z-controls) !important;
+  scale: clamp(0.8, 1.2vw, 1);
 }
 
+.react-flow__minimap {
+  position: absolute !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  border-radius: 10px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  border: 1px solid;
+  z-index: var(--z-minimap) !important;
+  width: clamp(120px, 20vw, 180px) !important;
+  height: clamp(80px, 13vw, 120px) !important;
+}
+
+.top-right-controls {
+  position: absolute;
+  top: 20px;
+  right: 160px;
+  display: flex;
+  gap: 4px;
+  border-radius: 10px;
+  padding: 4px;
+  backdrop-filter: blur(20px);
+  border: 1px solid;
+  z-index: var(--z-controls);
+  scale: clamp(0.8, 1.1vw, 1);
+}
+
+/* --- Floating Elements --- */
 .floating-validate-button {
   position: absolute;
   top: 20px;
@@ -631,103 +585,13 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(20px);
   color: white;
-  z-index: 200;
+  z-index: var(--z-floating);
   font-family: inherit;
   letter-spacing: 0.025em;
   white-space: nowrap;
 }
 
-.floating-validate-button.disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.app.light .floating-validate-button {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  box-shadow: 0 3px 12px rgba(59, 130, 246, 0.2);
-}
-.app.dark .floating-validate-button {
-  background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-hover));
-  box-shadow: 0 3px 12px rgba(105, 19, 224, 0.25);
-}
-
-/* --- React Flow Controls - Responsive --- */
-.react-flow__controls {
-  position: absolute !important;
-  bottom: 20px !important;
-  left: 20px !important;
-  border-radius: 10px;
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  border: 1px solid;
-  z-index: 100;
-  scale: clamp(0.8, 1.2vw, 1);
-}
-
-.react-flow__minimap {
-  position: absolute !important;
-  bottom: 20px !important;
-  right: 20px !important;
-  border-radius: 10px;
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  border: 1px solid;
-  z-index: 100;
-  width: clamp(120px, 20vw, 180px) !important;
-  height: clamp(80px, 13vw, 120px) !important;
-}
-
-.top-right-controls {
-  position: absolute;
-  top: 20px;
-  right: 160px;
-  display: flex;
-  gap: 4px;
-  border-radius: 10px;
-  padding: 4px;
-  backdrop-filter: blur(20px);
-  border: 1px solid;
-  z-index: 100;
-  scale: clamp(0.8, 1.1vw, 1);
-}
-
-/* --- Start Content - Responsive --- */
-.start-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-height: none;
-  padding: 0;
-}
-
-.welcome-card {
-  padding: clamp(12px, 2.5vw, 20px);
-  border-radius: 10px;
-  border: 1px solid;
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-}
-
-.feature-cards {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.feature-card {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid;
-  backdrop-filter: blur(10px);
-  transition: all 0.2s ease;
-  min-width: clamp(140px, 25vw, 160px);
-  flex-shrink: 0;
-}
-
-/* --- Submit Button Bar - Responsive --- */
+/* --- Submit Button Bar --- */
 .submit-button-container {
   position: fixed;
   bottom: 0;
@@ -741,7 +605,7 @@ body {
   background: var(--controls-bg-light);
   backdrop-filter: blur(20px);
   border-top: 1px solid;
-  z-index: 1000;
+  z-index: var(--z-modal);
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.04);
 }
 
@@ -750,108 +614,7 @@ body {
   box-shadow: 0 -8px 32px rgba(105, 19, 224, 0.1);
 }
 
-.pipeline-stats {
-  display: flex;
-  align-items: center;
-  gap: clamp(12px, 3vw, 24px);
-  color: var(--text-secondary-light);
-  font-size: clamp(11px, 1.6vw, 13px);
-  font-weight: 500;
-  font-family: inherit;
-}
-
-.app.dark .pipeline-stats {
-  color: var(--text-secondary-dark);
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: clamp(6px, 1.5vw, 10px);
-  padding: clamp(6px, 1.5vw, 10px) clamp(8px, 2vw, 16px);
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 8px;
-  border: 1px solid;
-  backdrop-filter: blur(10px);
-  white-space: nowrap;
-}
-
-.app.light .stat-item {
-  background: rgba(255, 255, 255, 0.6);
-  border-color: rgba(59, 130, 246, 0.2);
-}
-
-.app.dark .stat-item {
-  background: rgba(31, 27, 46, 0.6);
-  border-color: rgba(105, 19, 224, 0.2);
-}
-
-/* --- MAJOR RESPONSIVE BREAKPOINTS --- */
-
-/* Large Desktop (1440px+) - Optimal Experience */
-@media (min-width: 1440px) {
-  .app-header {
-    padding: 16px 32px;
-  }
-  
-  .toolbar-container {
-    padding: 0 32px;
-  }
-  
-  .header-right {
-    gap: 12px;
-  }
-  
-  .toolbar-tabs {
-    gap: 24px;
-  }
-  
-  .draggable-node {
-    min-width: 140px;
-    max-width: 200px;
-  }
-}
-
-/* Standard Desktop (1200px - 1439px) */
-@media (max-width: 1439px) and (min-width: 1200px) {
-  .header-right .header-button {
-    padding: 7px 12px;
-    font-size: 11px;
-  }
-  
-  .toolbar-tabs {
-    gap: 18px;
-  }
-}
-
-/* Small Desktop/Large Tablet (1024px - 1199px) */
-@media (max-width: 1199px) and (min-width: 1024px) {
-  .header-right .header-button {
-    padding: 6px 10px;
-    font-size: 11px;
-    gap: 4px;
-  }
-  
-  .pipeline-canvas {
-    margin: 14px;
-  }
-  
-  .draggable-node {
-    min-width: 120px;
-    max-width: 160px;
-    height: 40px;
-  }
-  
-  .toolbar-tabs {
-    gap: 16px;
-  }
-  
-  .sophisticated-node {
-    min-width: 160px;
-    min-height: 85px;
-    padding: 12px;
-  }
-}
+/* --- RESPONSIVE BREAKPOINTS --- */
 
 /* Tablet Portrait (768px - 1023px) */
 @media (max-width: 1023px) and (min-width: 768px) {
@@ -867,31 +630,6 @@ body {
     margin: 12px;
   }
   
-  .header-right {
-    gap: 6px;
-  }
-  
-  .header-right .header-button {
-    padding: 6px 8px;
-    font-size: 10px;
-    gap: 3px;
-  }
-  
-  /* Hide less critical header buttons on tablets */
-  .header-button:not(.primary):nth-last-child(n+3) {
-    display: none;
-  }
-  
-  .status-indicator {
-    padding: 4px 8px;
-    font-size: 10px;
-  }
-  
-  .toolbar-content {
-    overflow-x: auto;
-    gap: 6px;
-  }
-  
   .draggable-node {
     min-width: 110px;
     max-width: 140px;
@@ -899,31 +637,10 @@ body {
     padding: 6px 10px;
     gap: 6px;
   }
-  
-  .sophisticated-node {
-    min-width: 150px;
-    min-height: 80px;
-    padding: 10px;
-  }
-  
-  .react-flow__minimap {
-    width: 140px !important;
-    height: 95px !important;
-  }
-  
-  .top-right-controls {
-    right: 150px;
-    scale: 0.9;
-  }
-  
-  .floating-validate-button {
-    padding: 8px 16px;
-    font-size: 11px;
-  }
 }
 
-/* Mobile Landscape (480px - 767px) */
-@media (max-width: 767px) and (min-width: 480px) {
+/* Mobile (767px and below) */
+@media (max-width: 767px) {
   .app-header {
     padding: 8px 16px;
   }
@@ -936,86 +653,12 @@ body {
     margin: 8px;
   }
   
-  .header-left {
-    gap: 8px;
-  }
-  
-  .header-right {
-    gap: 4px;
-  }
-  
-  .pipeline-name-container {
-    gap: 4px;
-  }
-  
-  .breadcrumb-separator {
-    display: none; /* Hide breadcrumb on mobile */
-  }
-  
-  /* Show only essential header buttons */
-  .header-button:not(.primary) {
-    display: none;
-  }
-  
-  .header-button.primary {
-    padding: 8px 12px;
-    font-size: 11px;
-  }
-  
-  .status-indicator {
-    padding: 3px 6px;
-    font-size: 9px;
-    gap: 4px;
-  }
-  
-  .status-dot {
-    width: 4px;
-    height: 4px;
-  }
-  
-  .toolbar-tabs {
-    gap: 12px;
-    padding-top: 8px;
-    margin-bottom: 8px;
-  }
-  
-  .toolbar-tab {
-    font-size: 11px;
-    gap: 4px;
-  }
-  
-  .toolbar-content {
-    padding-bottom: 8px;
-    gap: 6px;
-    flex-direction: row;
-    overflow-x: auto;
-  }
-  
   .draggable-node {
     min-width: 100px;
     max-width: 120px;
     height: 36px;
     padding: 6px 8px;
     gap: 6px;
-  }
-  
-  .draggable-node-icon {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .draggable-node-label {
-    font-size: 10px;
-  }
-  
-  .draggable-node-description {
-    font-size: 8px;
-  }
-  
-  .sophisticated-node {
-    min-width: 140px;
-    min-height: 75px;
-    padding: 8px;
   }
   
   .react-flow__controls {
@@ -1030,489 +673,12 @@ body {
     bottom: calc(var(--bottom-bar-height) + 10px) !important;
     right: 10px !important;
   }
-  
-  .top-right-controls {
-    top: 15px;
-    right: 15px;
-    scale: 0.8;
-  }
-  
-  .floating-validate-button {
-    top: 15px;
-    right: 15px;
-    padding: 6px 12px;
-    font-size: 10px;
-    border-radius: 6px;
-  }
-  
-  .floating-status-bar {
-    top: 15px;
-    padding: 6px 12px;
-    gap: 8px;
-    font-size: 9px;
-    max-width: calc(100vw - 30px);
-  }
-  
-  /* Adjust start content for mobile landscape */
-  .start-content {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .welcome-card {
-    padding: 12px;
-  }
-  
-  .feature-cards {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 8px;
-  }
-  
-  .feature-card {
-    min-width: 120px;
-    padding: 10px;
-  }
 }
 
-/* Mobile Portrait (320px - 479px) */
-@media (max-width: 479px) {
-  .app-header {
-    padding: 6px 12px;
-    height: var(--header-height);
-  }
-  
-  .toolbar-container {
-    padding: 0 12px;
-    height: var(--toolbar-height);
-  }
-  
-  .pipeline-canvas {
-    margin: 6px;
-    border-radius: 8px;
-  }
-  
-  .header-left {
-    gap: 6px;
-    flex: 1;
-    min-width: 0;
-  }
-  
-  .header-right {
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  
-  .pipeline-name-container {
-    gap: 3px;
-    flex: 1;
-    min-width: 0;
-  }
-  
-  .pipeline-name-input {
-    font-size: 12px;
-    padding: 4px 6px;
-    min-width: 80px;
-    max-width: 150px;
-  }
-  
-  /* Show only the most essential header elements */
-  .status-indicator {
-    display: none;
-  }
-  
-  .header-button:not(.primary) {
-    display: none;
-  }
-  
-  .header-button.primary {
-    padding: 6px 10px;
-    font-size: 10px;
-    gap: 3px;
-  }
-  
-  .toolbar-tabs {
-    gap: 8px;
-    padding-top: 6px;
-    margin-bottom: 6px;
-  }
-  
-  .toolbar-tab {
-    font-size: 10px;
-    gap: 3px;
-    padding-bottom: 6px;
-  }
-  
-  .toolbar-content {
-    padding-bottom: 6px;
-    gap: 6px;
-    flex-direction: row;
-    overflow-x: auto;
-    min-height: auto;
-  }
-  
-  .draggable-node {
-    min-width: 90px;
-    max-width: 110px;
-    height: 34px;
-    padding: 5px 7px;
-    gap: 5px;
-    border-radius: 6px;
-  }
-  
-  .draggable-node-icon {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-  }
-  
-  .draggable-node-label {
-    font-size: 9px;
-    font-weight: 600;
-  }
-  
-  .draggable-node-description {
-    font-size: 7px;
-    display: none; /* Hide descriptions on very small screens */
-  }
-  
-  .sophisticated-node {
-    min-width: 130px;
-    min-height: 70px;
-    padding: 7px;
-    border-radius: 8px;
-  }
-  
-  .react-flow__handle {
-    width: 7px !important;
-    height: 7px !important;
-    border-width: 1.5px !important;
-  }
-  
-  .react-flow__controls {
-    bottom: calc(var(--bottom-bar-height) + 8px) !important;
-    left: 8px !important;
-    scale: 0.7;
-  }
-  
-  .react-flow__minimap {
-    width: 100px !important;
-    height: 65px !important;
-    bottom: calc(var(--bottom-bar-height) + 8px) !important;
-    right: 8px !important;
-  }
-  
-  .top-right-controls {
-    top: 12px;
-    right: 12px;
-    scale: 0.7;
-    gap: 2px;
-    padding: 2px;
-  }
-  
-  .top-right-controls button {
-    padding: 4px;
-  }
-  
-  .floating-validate-button {
-    top: 12px;
-    right: 12px;
-    padding: 5px 8px;
-    font-size: 9px;
-    border-radius: 5px;
-    gap: 3px;
-  }
-  
-  .floating-status-bar {
-    top: 12px;
-    padding: 4px 8px;
-    gap: 6px;
-    font-size: 8px;
-    border-radius: 6px;
-    max-width: calc(100vw - 24px);
-  }
-  
-  .status-item {
-    padding: 3px 6px;
-    gap: 4px;
-    border-radius: 4px;
-  }
-  
-  /* Mobile portrait start content */
-  .start-content {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .welcome-card {
-    padding: 10px;
-    border-radius: 8px;
-  }
-  
-  .feature-cards {
-    flex-direction: column;
-    gap: 6px;
-    overflow-x: visible;
-  }
-  
-  .feature-card {
-    min-width: auto;
-    padding: 8px;
-    border-radius: 6px;
-  }
-  
-  /* Submit button container for mobile */
-  .submit-button-container {
-    padding: 8px 12px;
-    height: var(--bottom-bar-height);
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-  }
-  
-  .pipeline-stats {
-    gap: 8px;
-    font-size: 9px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .stat-item {
-    padding: 4px 8px;
-    gap: 4px;
-    font-size: 8px;
-    border-radius: 4px;
-  }
-  
-  .submit-button-container button {
-    width: 100%;
-    padding: 10px 16px;
-    font-size: 11px;
-    justify-content: center;
-  }
-}
-
-/* Ultra-small screens (below 320px) */
-@media (max-width: 319px) {
-  .app-header {
-    padding: 4px 8px;
-    height: 48px;
-  }
-  
-  .toolbar-container {
-    padding: 0 8px;
-    height: 80px;
-  }
-  
-  .pipeline-canvas {
-    margin: 4px;
-    border-radius: 6px;
-  }
-  
-  .pipeline-name-input {
-    font-size: 11px;
-    padding: 3px 5px;
-    min-width: 60px;
-    max-width: 120px;
-  }
-  
-  .header-button.primary {
-    padding: 4px 8px;
-    font-size: 9px;
-  }
-  
-  .toolbar-tabs {
-    gap: 6px;
-  }
-  
-  .toolbar-tab {
-    font-size: 9px;
-  }
-  
-  .draggable-node {
-    min-width: 80px;
-    max-width: 100px;
-    height: 32px;
-    padding: 4px 6px;
-  }
-  
-  .draggable-node-icon {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .draggable-node-label {
-    font-size: 8px;
-  }
-  
-  .sophisticated-node {
-    min-width: 120px;
-    min-height: 65px;
-    padding: 6px;
-  }
-  
-  .react-flow__controls {
-    scale: 0.6;
-  }
-  
-  .react-flow__minimap {
-    width: 80px !important;
-    height: 50px !important;
-  }
-  
-  .top-right-controls {
-    scale: 0.6;
-  }
-  
-  .floating-validate-button {
-    padding: 4px 6px;
-    font-size: 8px;
-  }
-}
-
-/* Landscape orientation adjustments for mobile */
-@media (max-height: 500px) and (orientation: landscape) {
-  .app-header {
-    height: 48px;
-    padding: 6px 16px;
-  }
-  
-  .toolbar-container {
-    height: 80px;
-    padding: 0 16px;
-  }
-  
-  .submit-button-container {
-    height: 60px;
-    padding: 8px 16px;
-    flex-direction: row;
-  }
-  
-  .pipeline-stats {
-    flex-direction: row;
-    gap: 12px;
-  }
-  
-  .toolbar-content {
-    max-height: 50px;
-  }
-  
-  .react-flow__controls {
-    bottom: calc(60px + 10px) !important;
-  }
-  
-  .react-flow__minimap {
-    bottom: calc(60px + 10px) !important;
-    width: 100px !important;
-    height: 65px !important;
-  }
-}
-
-/* High DPI / Retina displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .draggable-node-icon {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  .sophisticated-node {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-}
-
-/* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-    animation: none !important;
-  }
-  
-  .status-dot {
-    animation: none;
-  }
-  
-  .react-flow__edge-path {
-    animation: none;
-    stroke-dasharray: none;
-  }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-  .app.light {
-    --border-light: #000000;
-    --text-secondary-light: #000000;
-  }
-  
-  .app.dark {
-    --border-dark: #ffffff;
-    --text-secondary-dark: #ffffff;
-  }
-  
-  .sophisticated-node {
-    border-width: 2px;
-  }
-  
-  .header-button {
-    border-width: 2px;
-  }
-}
-
-/* Print styles */
-@media print {
-  .app-header,
-  .toolbar-container,
-  .submit-button-container,
-  .react-flow__controls,
-  .react-flow__minimap,
-  .top-right-controls,
-  .floating-validate-button,
-  .floating-status-bar {
-    display: none !important;
-  }
-  
-  .pipeline-canvas {
-    margin: 0;
-    border: 1px solid #000;
-    box-shadow: none;
-  }
-  
-  .sophisticated-node {
-    box-shadow: none;
-    border: 1px solid #000;
-  }
-}
-
-/* Custom Scrollbars - Responsive */
-::-webkit-scrollbar {
-  width: clamp(4px, 0.8vw, 6px);
-  height: clamp(4px, 0.8vw, 6px);
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 3px;
-  transition: background 0.3s ease;
-}
-
-.app.light ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.3);
-}
-
-.app.dark ::-webkit-scrollbar-thumb {
-  background: rgba(167, 139, 250, 0.3);
-}
-
-.app.light ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.5);
-}
-
-.app.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(167, 139, 250, 0.5);
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 /* Performance Optimizations */
@@ -1532,51 +698,28 @@ body {
   contain: layout style;
 }
 
-/* Ensure proper stacking context */
-.app {
-  position: relative;
-  z-index: 0;
-}
-
-.app-header {
-  z-index: 1000;
-}
-
-.toolbar-container {
-  z-index: 999;
-}
-
-.pipeline-canvas {
-  z-index: 1;
-}
-
-.submit-button-container {
-  z-index: 1000;
-}
-
-/* Focus management for better accessibility */
-.header-button:focus,
-.toolbar-tab:focus,
-.draggable-node:focus {
-  outline: 2px solid;
-  outline-color: var(--accent-violet);
-  outline-offset: 2px;
-}
-
-.app.light .header-button:focus,
-.app.light .toolbar-tab:focus,
-.app.light .draggable-node:focus {
-  outline-color: #3b82f6;
-}
-
-/* Ensure touch targets are large enough on mobile */
-@media (max-width: 767px) {
-  .header-button,
-  .toolbar-tab,
-  .draggable-node,
-  .react-flow__controls-button,
-  .top-right-controls button {
-    min-height: 44px;
-    min-width: 44px;
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+  .header-button:hover,
+  .toolbar-tab:hover,
+  .draggable-node:hover {
+    transform: none !important;
+    box-shadow: none !important;
   }
+
+  .header-button:active,
+  .toolbar-tab:active,
+  .draggable-node:active {
+    transform: scale(0.98) !important;
+    opacity: 0.8 !important;
+  }
+}
+
+/* Accessibility */
+.header-button:focus-visible,
+.toolbar-tab:focus-visible,
+.pipeline-name-input:focus-visible {
+  outline: 2px solid var(--accent-violet) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
 }

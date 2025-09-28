@@ -1,4 +1,4 @@
-// Enhanced Responsive Toolbar Component - Premium VectorShift Style
+// Fixed Responsive Toolbar Component - Premium VectorShift Style
 import React, { useState, useEffect, useRef } from 'react';
 import { DraggableNode } from './draggableNode';
 import { useTheme } from './App';
@@ -125,34 +125,7 @@ export const PipelineToolbar = () => {
     }
   };
 
-  // Responsive tab styling
-  const getTabStyle = (isActive) => ({
-    display: 'flex',
-    alignItems: 'center',
-    gap: isMobile ? '4px' : '6px',
-    paddingBottom: isMobile ? '8px' : '10px',
-    fontSize: isMobile ? '11px' : (isTablet ? '12px' : '13px'),
-    fontWeight: '500',
-    cursor: 'pointer',
-    background: 'none',
-    border: 'none',
-    borderBottom: '2px solid transparent',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    color: isActive 
-      ? (isDark ? '#6913e0' : '#3b82f6')
-      : (isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)'),
-    borderColor: isActive 
-      ? (isDark ? '#6913e0' : '#3b82f6')
-      : 'transparent',
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    flexShrink: 0,
-    padding: isMobile ? '0 8px' : '0 4px',
-    minWidth: isMobile ? '60px' : 'auto',
-    textAlign: 'center',
-  });
-
-  // Responsive container styling
+  // Enhanced responsive styling
   const getContainerStyle = () => ({
     padding: isMobile ? '0 12px' : (isTablet ? '0 20px' : '0 24px'),
     borderBottom: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
@@ -163,37 +136,40 @@ export const PipelineToolbar = () => {
     flexDirection: 'column',
     backdropFilter: 'blur(20px)',
     position: 'relative',
-    zIndex: 999,
-    overflow: 'hidden',
+    zIndex: 998, // Ensure it's below header but above canvas
+    overflow: 'visible',
     background: isDark 
-      ? 'rgba(20, 19, 34, 0.85)'
-      : 'rgba(255, 255, 255, 0.85)',
+      ? 'rgba(20, 19, 34, 0.95)'
+      : 'rgba(255, 255, 255, 0.95)',
   });
 
-  // Responsive content styling
+  // Enhanced content styling for proper layering
   const getContentStyle = () => {
+    const baseStyle = {
+      paddingBottom: isMobile ? '8px' : '12px',
+      display: 'flex',
+      gap: isMobile ? '6px' : '8px',
+      flex: 1,
+      alignItems: 'flex-start',
+      scrollbarWidth: 'thin',
+      position: 'relative',
+      zIndex: 'inherit', // Inherit from parent
+    };
+
     if (isMobile && viewMode === 'list') {
       return {
-        paddingBottom: '8px',
-        display: 'flex',
+        ...baseStyle,
         flexDirection: 'column',
-        gap: '6px',
-        flex: 1,
         overflowY: 'auto',
+        overflowX: 'hidden',
         maxHeight: '50px',
       };
     }
     
     return {
-      paddingBottom: isMobile ? '8px' : '12px',
-      display: 'flex',
-      gap: isMobile ? '6px' : '8px',
+      ...baseStyle,
       overflowX: 'auto',
       overflowY: 'hidden',
-      flex: 1,
-      alignItems: 'flex-start',
-      scrollbarWidth: 'thin',
-      position: 'relative',
     };
   };
 
@@ -225,8 +201,8 @@ export const PipelineToolbar = () => {
 
   const getFeatureCardStyle = () => ({
     background: isDark 
-      ? 'rgba(31, 27, 46, 0.6)'
-      : 'rgba(255, 255, 255, 0.8)',
+      ? 'rgba(31, 27, 46, 0.8)'
+      : 'rgba(255, 255, 255, 0.9)',
     padding: isMobile ? '8px' : '12px',
     borderRadius: isMobile ? '6px' : '8px',
     border: `1px solid ${isDark ? 'rgba(105, 19, 224, 0.18)' : 'rgba(59, 130, 246, 0.12)'}`,
@@ -263,9 +239,10 @@ export const PipelineToolbar = () => {
         alignItems: 'center',
         marginBottom: isMobile ? '8px' : '12px',
         paddingTop: isMobile ? '8px' : '12px',
+        zIndex: 'inherit',
       }}>
         {/* Left Scroll Button */}
-        {showScrollButtons && canScrollLeft && (
+        {showScrollButtons && canScrollLeft && !isMobile && (
           <button
             onClick={scrollLeft}
             style={{
@@ -293,13 +270,13 @@ export const PipelineToolbar = () => {
           ref={tabsRef}
           style={{
             display: 'flex',
-            gap: isMobile ? '12px' : '20px',
+            gap: isMobile ? '8px' : '16px',
             overflowX: 'auto',
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             flex: 1,
-            paddingLeft: showScrollButtons && canScrollLeft ? '20px' : '0',
-            paddingRight: showScrollButtons && canScrollRight ? '20px' : '0',
+            paddingLeft: showScrollButtons && canScrollLeft && !isMobile ? '20px' : '0',
+            paddingRight: showScrollButtons && canScrollRight && !isMobile ? '20px' : '0',
           }}
           onScroll={checkScrollState}
         >
@@ -309,7 +286,31 @@ export const PipelineToolbar = () => {
             return (
               <button
                 key={tab.id}
-                style={getTabStyle(isActive)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: isMobile ? '3px' : '6px',
+                  paddingBottom: isMobile ? '6px' : '8px',
+                  fontSize: isMobile ? '10px' : (isTablet ? '11px' : '13px'),
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: '2px solid transparent',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  color: isActive 
+                    ? (isDark ? '#6913e0' : '#3b82f6')
+                    : (isDark ? 'rgba(167, 139, 250, 0.7)' : 'rgba(100, 116, 139, 0.7)'),
+                  borderColor: isActive 
+                    ? (isDark ? '#6913e0' : '#3b82f6')
+                    : 'transparent',
+                  position: 'relative',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  padding: isMobile ? '0 4px' : '0 8px',
+                  minWidth: isMobile ? '50px' : 'auto',
+                  textAlign: 'center',
+                }}
                 onClick={() => setActiveTab(tab.id)}
                 onMouseEnter={(e) => {
                   if (!isActive) {
@@ -322,7 +323,7 @@ export const PipelineToolbar = () => {
                   }
                 }}
               >
-                <Icon size={isMobile ? 12 : 14} />
+                <Icon size={isMobile ? 10 : 12} />
                 {(!isMobile || screenSize.width > 400) && <span>{tab.label}</span>}
               </button>
             );
@@ -330,7 +331,7 @@ export const PipelineToolbar = () => {
         </div>
 
         {/* Right Scroll Button */}
-        {showScrollButtons && canScrollRight && (
+        {showScrollButtons && canScrollRight && !isMobile && (
           <button
             onClick={scrollRight}
             style={{
@@ -362,6 +363,7 @@ export const PipelineToolbar = () => {
           gap: '8px',
           marginBottom: '8px',
           padding: '0 4px',
+          zIndex: 'inherit',
         }}>
           <span style={{
             fontSize: '10px',
@@ -419,9 +421,9 @@ export const PipelineToolbar = () => {
 
       {/* Content Section with Enhanced Scroll Controls */}
       {getNodesForTab(activeTab).length > 0 && (
-        <div style={{ position: 'relative', flex: 1 }}>
+        <div style={{ position: 'relative', flex: 1, zIndex: 'inherit' }}>
           {/* Content scroll buttons for desktop/tablet */}
-          {!isMobile && (
+          {!isMobile && viewMode === 'grid' && (
             <>
               <button
                 onClick={scrollContentLeft}
